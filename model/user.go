@@ -1,8 +1,10 @@
 package model;
 
 import (
+   "encoding/hex"
    "encoding/json"
    "fmt"
+   "strings"
 
    driverutil "github.com/eriq-augustine/elfs/util"
    "github.com/pkg/errors"
@@ -23,27 +25,43 @@ type DiskUser struct {
 // Then a user auths, we can decrypt their parition credentials.
 type MemoryUser struct {
    DiskUser
-   PartitionCredentials []partitionCredential
+   PartitionCredentials map[string]PartitionCredential  // Map of connection string to credential.
 }
 
 // Information for a user specific to a partition.
 // Will remain encrypted on disk.
-type partitionCredential struct {
-   PartitionAddress string
+type PartitionCredential struct {
    Username string
-   Password string
+   Weakhash string
    PartitionKey string
 }
 
 // The partition credentials are stored on disk as an encrypted JSON string.
 // The key is the user's weakhash, which is not stored anywhere.
 func (this *MemoryUser) EncryptPartitionCredentials(weakhash string) error {
+   if (this.PartitionCredentials == nil || len(this.PartitionCredentials) == 0) {
+      this.CipherPartitionCredentials = nil;
+      return nil;
+   }
+
    jsonString, err := util.ToJSON(this.PartitionCredentials);
    if (err != nil) {
       return errors.WithStack(err);
    }
 
-   ciphertext, err := driverutil.Encrypt([]byte(weakhash), this.IV, []byte(jsonString));
+   // Convert the weak hash from hex to bytes.
+   // The weakhash is supposed to be in a SHA256 (so 32 bytes).
+   if (len(weakhash) != 64) {
+      return errors.Errorf("Weakhash is incorrect length. Expected: 64, Got: %d", len(weakhash));
+   }
+
+   var keyBytes []byte = make([]byte, hex.DecodedLen(len(weakhash)));
+   _, err = hex.Decode(keyBytes, []byte(weakhash));
+   if (err != nil) {
+      return errors.WithStack(err);
+   }
+
+   ciphertext, err := driverutil.Encrypt(keyBytes, this.IV, []byte(jsonString));
    if (err != nil) {
       return errors.WithStack(err);
    }
@@ -53,11 +71,28 @@ func (this *MemoryUser) EncryptPartitionCredentials(weakhash string) error {
 }
 
 func (this *MemoryUser) DecryptPartitionCredentials(weakhash string) error {
+   if (this.CipherPartitionCredentials == nil || len(this.CipherPartitionCredentials) == 0) {
+      this.PartitionCredentials = make(map[string]PartitionCredential);
+      return nil;
+   }
+
    if (this.PartitionCredentials != nil) {
       return nil;
    }
 
-   cleartext, err := driverutil.Decrypt([]byte(weakhash), this.IV, this.CipherPartitionCredentials);
+   // Convert the weak hash from hex to bytes.
+   // The weakhash is supposed to be in a SHA256 (so 32 bytes).
+   if (len(weakhash) != 64) {
+      return errors.Errorf("Weakhash is incorrect length. Expected: 64, Got: %d", len(weakhash));
+   }
+
+   var keyBytes []byte = make([]byte, hex.DecodedLen(len(weakhash)));
+   _, err := hex.Decode(keyBytes, []byte(weakhash));
+   if (err != nil) {
+      return errors.WithStack(err);
+   }
+
+   cleartext, err := driverutil.Decrypt(keyBytes, this.IV, this.CipherPartitionCredentials);
    if (err != nil) {
       return errors.WithStack(err);
    }
@@ -66,10 +101,25 @@ func (this *MemoryUser) DecryptPartitionCredentials(weakhash string) error {
    return errors.WithStack(err);
 }
 
-func (this *MemoryUser) String() string {
-   if (this.IsAdmin) {
-      return fmt.Sprintf("%s (Admin)", this.Username);
+func (this *MemoryUser) LongString() string {
+   var filesystemUsers []string = make([]string, 0, len(this.PartitionCredentials));
+   for connectionString, creds := range(this.PartitionCredentials) {
+      filesystemUsers = append(filesystemUsers, fmt.Sprintf("%s::%s", creds.Username, connectionString));
    }
 
-   return this.Username;
+   var adminStatus string = "";
+   if (this.IsAdmin) {
+      adminStatus = "(Admin) ";
+   }
+
+   return fmt.Sprintf("%s %s[%s]", this.Username, adminStatus, strings.Join(filesystemUsers, ", "));
+}
+
+func (this *MemoryUser) String() string {
+   var adminStatus string = "";
+   if (this.IsAdmin) {
+      adminStatus = "(Admin) ";
+   }
+
+   return fmt.Sprintf("%s %s", this.Username, adminStatus);
 }

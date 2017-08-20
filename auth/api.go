@@ -1,6 +1,7 @@
 package auth;
 
-// We use fairly simple security.
+// Authentication for the API.
+// Note that there is a second level for authentication to each partition.
 // Auth the user and give them a token that does not expire.
 // However the token is stored in memory, so a server restart invalidates it.
 
@@ -30,21 +31,21 @@ const (
 )
 
 // {username: *User}
-var Users map[string]*model.MemoryUser
+var apiUsers map[string]*model.MemoryUser
 // {token: username}
-var Sessions map[string]string;
+var apiSessions map[string]string;
 
 var createAccountMutex *sync.Mutex;
 
 func init() {
    createAccountMutex = &sync.Mutex{};
-   Users = make(map[string]*model.MemoryUser);
-   Sessions = make(map[string]string);
+   apiUsers = make(map[string]*model.MemoryUser);
+   apiSessions = make(map[string]string);
 }
 
 // Returns the token.
 func AuthenticateUser(username string, weakhash string) (string, error) {
-   user, exists := Users[username];
+   user, exists := apiUsers[username];
    if (!exists) {
       return "", apierrors.TokenValidationError{apierrors.TOKEN_AUTH_BAD_CREDENTIALS};
    }
@@ -55,7 +56,7 @@ func AuthenticateUser(username string, weakhash string) (string, error) {
    }
 
    token, _:= generateToken();
-   Sessions[token] = username;
+   apiSessions[token] = username;
 
    // Ensure that any partition credentials are decrypted.
    user.DecryptPartitionCredentials(weakhash)
@@ -65,7 +66,7 @@ func AuthenticateUser(username string, weakhash string) (string, error) {
 
 // Validate the token and get back the token's secret.
 func ValidateToken(token string) (string, error) {
-   username, exists := Sessions[token];
+   username, exists := apiSessions[token];
    if (!exists) {
       return "", apierrors.TokenValidationError{apierrors.TOKEN_VALIDATION_NO_TOKEN};
    }
@@ -75,12 +76,12 @@ func ValidateToken(token string) (string, error) {
 
 // Invalidate the token.
 func InvalidateToken(token string) (bool, error) {
-   _, exists := Sessions[token];
+   _, exists := apiSessions[token];
    if (!exists) {
       return false, apierrors.TokenValidationError{apierrors.TOKEN_VALIDATION_NO_TOKEN};
    }
 
-   delete(Sessions, token);
+   delete(apiSessions, token);
    return true, nil;
 }
 
@@ -88,7 +89,7 @@ func CreateUser(username string, passhash string) (string, error) {
    createAccountMutex.Lock();
    defer createAccountMutex.Unlock();
 
-   _, exists := Users[username];
+   _, exists := apiUsers[username];
    if (exists) {
       return "", fmt.Errorf("Username (%s) already exists", username);
    }
@@ -99,7 +100,7 @@ func CreateUser(username string, passhash string) (string, error) {
       return "", err;
    }
 
-   Users[username] = &model.MemoryUser{
+   apiUsers[username] = &model.MemoryUser{
       DiskUser: model.DiskUser{
          Username: username,
          Passhash: string(bcryptHash),
@@ -111,7 +112,7 @@ func CreateUser(username string, passhash string) (string, error) {
    };
 
    token, _:= generateToken();
-   Sessions[token] = username;
+   apiSessions[token] = username;
 
    SaveUsers();
 
@@ -119,7 +120,7 @@ func CreateUser(username string, passhash string) (string, error) {
 }
 
 func SaveUsers() {
-   SaveUsersFile(goconfig.GetString("usersFile"), Users);
+   SaveUsersFile(goconfig.GetString("usersFile"), apiUsers);
 }
 
 func SaveUsersFile(usersFile string, usersMap map[string]*model.MemoryUser) {
@@ -130,18 +131,18 @@ func SaveUsersFile(usersFile string, usersMap map[string]*model.MemoryUser) {
 
    jsonString, err := util.ToJSONPretty(fileUsers);
    if (err != nil) {
-      golog.ErrorE("Unable to marshal users", err);
+      golog.ErrorE("Unable to marshal apiUsers", err);
       return;
    }
 
    err = ioutil.WriteFile(usersFile, []byte(jsonString), 0600);
    if (err != nil) {
-      golog.ErrorE("Unable to save users", err);
+      golog.ErrorE("Unable to save apiUsers", err);
    }
 }
 
 func LoadUsers() {
-   Users = LoadUsersFromFile(goconfig.GetString("usersFile"));
+   apiUsers = LoadUsersFromFile(goconfig.GetString("usersFile"));
 }
 
 func LoadUsersFromFile(usersFile string) map[string]*model.MemoryUser {
@@ -149,14 +150,14 @@ func LoadUsersFromFile(usersFile string) map[string]*model.MemoryUser {
 
    data, err := ioutil.ReadFile(usersFile);
    if (err != nil) {
-      golog.ErrorE("Unable to read users file", err);
+      golog.ErrorE("Unable to read apiUsers file", err);
       return usersMap;
    }
 
    var fileUsers []model.DiskUser;
    err = json.Unmarshal(data, &fileUsers);
    if (err != nil) {
-      golog.ErrorE("Unable to unmarshal users", err);
+      golog.ErrorE("Unable to unmarshal apiUsers", err);
       return usersMap;
    }
 

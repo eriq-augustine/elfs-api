@@ -6,24 +6,30 @@ import (
    "net/http"
    "path"
 
+   "github.com/eriq-augustine/goapi"
    "github.com/eriq-augustine/golog"
 
    "github.com/eriq-augustine/elfs/dirent"
    "github.com/eriq-augustine/elfs/driver"
+   "github.com/eriq-augustine/elfs/user"
+   "github.com/eriq-augustine/elfs-api/auth"
    "github.com/eriq-augustine/elfs-api/messages"
    "github.com/eriq-augustine/elfs-api/model"
-   "github.com/eriq-augustine/elfs/user"
 
    "github.com/eriq-augustine/elfs-api/fsdriver"
 );
 
-// TODO(eriq): Need to auth this user against the partition they want to use.
-//  Maybe have a mapping of [user][partition] => credentials
-
-func browse(partition string, rawDirentId string, response http.ResponseWriter) (interface{}, int, error) {
+func browse(username goapi.UserName, partition string, rawDirentId string, response http.ResponseWriter) (interface{}, int, error) {
    golog.Debug("Serving: " + partition + "::[" + rawDirentId + "]");
 
+   // Get the driver.
    driver, err := fsdriver.GetDriver(partition);
+   if (err != nil) {
+      return "", 0, err;
+   }
+
+   // Auth the user for this partition.
+   userId, err := auth.AuthenticateFilesystemUser(driver, string(username));
    if (err != nil) {
       return "", 0, err;
    }
@@ -33,22 +39,20 @@ func browse(partition string, rawDirentId string, response http.ResponseWriter) 
       direntId = dirent.ROOT_ID;
    }
 
-   // TODO
-   direntInfo, err := driver.GetDirent(user.ROOT_ID, direntId);
+   direntInfo, err := driver.GetDirent(userId, direntId);
    if (err != nil) {
       return "", 0, err;
    }
 
    if (direntInfo.IsFile) {
-      return serveFile(driver, direntInfo, response);
+      return serveFile(userId, driver, direntInfo, response);
    } else {
-      return serveDir(driver, direntInfo);
+      return serveDir(userId, driver, direntInfo);
    }
 }
 
-func serveDir(driver *driver.Driver, dirInfo *dirent.Dirent) (interface{}, int, error) {
-   // TODO
-   children, err := driver.List(user.ROOT_ID, dirInfo.Id);
+func serveDir(userId user.Id, driver *driver.Driver, dirInfo *dirent.Dirent) (interface{}, int, error) {
+   children, err := driver.List(userId, dirInfo.Id);
    if (err != nil) {
       return "", 0, err;
    }
@@ -64,12 +68,11 @@ func serveDir(driver *driver.Driver, dirInfo *dirent.Dirent) (interface{}, int, 
 // TODO(eriq): goapi needs some work to handle streaming responses.
 // TODO(eriq): Also needs more work with headers. Here we are calling WriteHeaders twice.
 
-func serveFile(driver *driver.Driver, fileInfo *dirent.Dirent, response http.ResponseWriter) (interface{}, int, error) {
+func serveFile(userId user.Id, driver *driver.Driver, fileInfo *dirent.Dirent, response http.ResponseWriter) (interface{}, int, error) {
    // Set the content type before we write anything.
    response.Header().Set("Content-Type", mime.TypeByExtension(path.Ext(fileInfo.Name)));
 
-   // TODO
-   reader, err := driver.Read(user.ROOT_ID, fileInfo.Id);
+   reader, err := driver.Read(userId, fileInfo.Id);
    if (err != nil) {
       return "", 0, err;
    }

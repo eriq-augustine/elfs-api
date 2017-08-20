@@ -2,7 +2,7 @@ package util;
 
 import (
    "crypto/sha1"
-   "crypto/sha512"
+   "crypto/sha256"
    "encoding/hex"
 );
 
@@ -13,14 +13,14 @@ func SHA1Hex(val string) string {
    return hex.EncodeToString(hash.Sum(nil));
 }
 
-// Get the SHA2-512 string.
-func SHA512Hex(val string) string {
-   data := sha512.Sum512([]byte(val));
+// Get the SHA2-256 string.
+func SHA256Hex(val string) string {
+   data := sha256.Sum256([]byte(val));
    return hex.EncodeToString(data[:]);
 }
 
 // Generate a password hash the same way that clients are expected to.
 func Weakhash(username string, password string) string {
    saltedData := username + "." + password + "." + username;
-   return SHA512Hex(saltedData);
+   return SHA256Hex(saltedData);
 }

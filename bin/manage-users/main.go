@@ -21,11 +21,14 @@ func showUsage() {
    fmt.Println("Manage a users file.\n");
    fmt.Printf("usage: %s <action> <users file>\n\n", os.Args[0]);
    fmt.Println("Options:");
-   fmt.Println("   list (ls)   - list the users present the the given file");
-   fmt.Println("   add (a)     - add a user to the given file (will create the file if it does not exist)");
-   fmt.Println("   remove (rm) - remove a user from the given file");
-   fmt.Println("   edit (e)    - edit a user in the given file");
-   fmt.Println("   help (h)    - print this message and exit");
+   fmt.Println("   list (ls)               - list the users present the the given file");
+   fmt.Println("   info (i)                - get more detailed info on a specific user");
+   fmt.Println("   add (a)                 - add a user to the given file (will create the file if it does not exist)");
+   fmt.Println("   add-fscreds (afsc)      - add (put actually) filesystem credentials to a user");
+   fmt.Println("   remove (rm)             - remove a user from the given file");
+   fmt.Println("   remove-fscreds (rmfsc)  - remove filesystem credentials from a user");
+   fmt.Println("   edit (e)                - edit a user in the given file");
+   fmt.Println("   help (h)                - print this message and exit");
 }
 
 func readLine() string {
@@ -113,8 +116,64 @@ func addUser(usersFile string) {
          IV: driverutil.GenIV(),
          CipherPartitionCredentials: nil,
       },
-      PartitionCredentials: nil,
+      PartitionCredentials: make(map[string]model.PartitionCredential),
    };
+   auth.SaveUsersFile(usersFile, usersMap);
+}
+
+func addFilesystemCreds(usersFile string) {
+   if (!util.PathExists(usersFile)) {
+      fmt.Printf("Users file (%s) does not exist.\n", usersFile);
+      return;
+   }
+
+   usersMap := auth.LoadUsersFromFile(usersFile);
+
+   fmt.Print("API Username: ");
+   username := readLine();
+
+   apiUser, ok := usersMap[username];
+   if (!ok) {
+      fmt.Printf("User (%s) does not exist. Exiting...", username);
+      os.Exit(1);
+   }
+
+   fmt.Print("API Password: ");
+   weakhash := util.Weakhash(username, readPassword());
+
+   err := bcrypt.CompareHashAndPassword([]byte(apiUser.Passhash), []byte(weakhash));
+   if (err != nil) {
+      fmt.Printf("Incorrect password: %+v\n", err);
+      os.Exit(1);
+   }
+
+   err = apiUser.DecryptPartitionCredentials(weakhash);
+   if (err != nil) {
+      fmt.Printf("Failed to decrypt partition credentials: %+v\n", err);
+      os.Exit(1);
+   }
+
+   fmt.Print("FileSystem Connection String: ");
+   connectionString := readLine();
+
+   fmt.Print("FileSystem Username: ");
+   fsUsername := readLine();
+
+   fmt.Print("FileSystem Password: ");
+   fsWeakhash := driverutil.ShaHash(readPassword());
+
+   apiUser.PartitionCredentials[connectionString] = model.PartitionCredential{
+      Username: fsUsername,
+      Weakhash: fsWeakhash,
+      PartitionKey: "",
+   };
+
+   err = apiUser.EncryptPartitionCredentials(weakhash);
+   if (err != nil) {
+      fmt.Printf("Failed to encrypt partition credentials: %+v\n", err);
+      os.Exit(1);
+   }
+
    auth.SaveUsersFile(usersFile, usersMap);
 }
 
@@ -136,6 +195,87 @@ func removeUser(usersFile string) {
    }
 
    delete(usersMap, username);
+   auth.SaveUsersFile(usersFile, usersMap);
+}
+
+func showInfo(usersFile string) {
+   if (!util.PathExists(usersFile)) {
+      fmt.Printf("Users file (%s) does not exist.\n", usersFile);
+      return;
+   }
+
+   usersMap := auth.LoadUsersFromFile(usersFile);
+
+   fmt.Print("API Username: ");
+   username := readLine();
+
+   apiUser, ok := usersMap[username];
+   if (!ok) {
+      fmt.Printf("User (%s) does not exist. Exiting...", username);
+      os.Exit(1);
+   }
+
+   fmt.Print("API Password: ");
+   weakhash := util.Weakhash(username, readPassword());
+
+   err := bcrypt.CompareHashAndPassword([]byte(apiUser.Passhash), []byte(weakhash));
+   if (err != nil) {
+      fmt.Printf("Incorrect password: %+v\n", err);
+      os.Exit(1);
+   }
+
+   err = apiUser.DecryptPartitionCredentials(weakhash);
+   if (err != nil) {
+      fmt.Printf("Failed to decrypt partition credentials: %+v\n", err);
+      os.Exit(1);
+   }
+
+   fmt.Println(apiUser.LongString());
+}
+
+func removeFilesystemCreds(usersFile string) {
+   if (!util.PathExists(usersFile)) {
+      fmt.Printf("Users file (%s) does not exist.\n", usersFile);
+      return;
+   }
+
+   usersMap := auth.LoadUsersFromFile(usersFile);
+
+   fmt.Print("API Username: ");
+   username := readLine();
+
+   apiUser, ok := usersMap[username];
+   if (!ok) {
+      fmt.Printf("User (%s) does not exist. Exiting...", username);
+      os.Exit(1);
+   }
+
+   fmt.Print("API Password: ");
+   weakhash := util.Weakhash(username, readPassword());
+
+   err := bcrypt.CompareHashAndPassword([]byte(apiUser.Passhash), []byte(weakhash));
+   if (err != nil) {
+      fmt.Printf("Incorrect password: %+v\n", err);
+      os.Exit(1);
+   }
+
+   err = apiUser.DecryptPartitionCredentials(weakhash);
+   if (err != nil) {
+      fmt.Printf("Failed to decrypt partition credentials: %+v\n", err);
+      os.Exit(1);
+   }
+
+   fmt.Print("FileSystem Connection String: ");
+   connectionString := readLine();
+
+   delete(apiUser.PartitionCredentials, connectionString);
+
+   err = apiUser.EncryptPartitionCredentials(weakhash);
+   if (err != nil) {
+      fmt.Printf("Failed to encrypt partition credentials: %+v\n", err);
+      os.Exit(1);
+   }
+
    auth.SaveUsersFile(usersFile, usersMap);
 }
 
@@ -190,8 +330,17 @@ func main() {
    case "add", "a":
       addUser(args[2]);
       break;
+   case "add-fscreds", "afsc":
+      addFilesystemCreds(args[2]);
+      break;
+   case "info", "i":
+      showInfo(args[2]);
+      break;
    case "remove", "rm":
       removeUser(args[2]);
+      break;
+   case "remove-fscreds", "rmfsc":
+      removeFilesystemCreds(args[2]);
       break;
    case "edit", "e":
       editUser(args[2]);
