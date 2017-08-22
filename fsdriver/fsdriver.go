@@ -13,7 +13,6 @@ import (
 )
 
 // TODO(eriq): "Public" partitions
-// TODO(eriq): Close connectors.
 
 const (
    CONNECTION_STRING_DELIM = ":"
@@ -22,13 +21,13 @@ const (
    TEST_IV = "c623e32e564f9f4746a98db7"
 )
 
-var Drivers map[string]*driver.Driver;
+var drivers map[string]*driver.Driver;
 
 var driverMutex *sync.Mutex;
 
 func init() {
    driverMutex = &sync.Mutex{};
-   Drivers = make(map[string]*driver.Driver);
+   drivers = make(map[string]*driver.Driver);
 }
 
 func GetDriver(connectionString string) (*driver.Driver, error) {
@@ -39,7 +38,7 @@ func GetDriver(connectionString string) (*driver.Driver, error) {
    var rtn *driver.Driver = nil;
    var err error = nil;
 
-   rtn, ok := Drivers[connectionString];
+   rtn, ok := drivers[connectionString];
    if (ok) {
       return rtn, nil;
    }
@@ -74,6 +73,17 @@ func GetDriver(connectionString string) (*driver.Driver, error) {
       return nil, errors.Errorf("Unknown driver type: [%s]", parts[0]);
    }
 
-   Drivers[connectionString] = rtn;
+   drivers[connectionString] = rtn;
    return rtn, nil;
+}
+
+func CloseDrivers() {
+   driverMutex.Lock();
+   defer driverMutex.Unlock();
+
+   for _, driver := range(drivers) {
+      driver.Close()
+   }
+
+   drivers = make(map[string]*driver.Driver);
 }
