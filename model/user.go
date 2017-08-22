@@ -33,7 +33,8 @@ type MemoryUser struct {
 type PartitionCredential struct {
    Username string
    Weakhash string
-   PartitionKey string
+   PartitionKey []byte
+   PartitionIV []byte
 }
 
 // The partition credentials are stored on disk as an encrypted JSON string.

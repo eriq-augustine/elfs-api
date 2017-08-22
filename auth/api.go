@@ -43,6 +43,11 @@ func init() {
    apiSessions = make(map[string]string);
 }
 
+func GetUser(username string) (*model.MemoryUser, bool) {
+   user, ok := apiUsers[username];
+   return user, ok;
+}
+
 // Returns the token.
 func AuthenticateUser(username string, weakhash string) (string, error) {
    user, exists := apiUsers[username];

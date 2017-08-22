@@ -3,24 +3,21 @@ package fsdriver;
 // Manage filesystem drivers.
 
 import (
-   "encoding/hex"
    "path/filepath"
    "strings"
    "sync"
 
    "github.com/eriq-augustine/elfs/driver"
    "github.com/pkg/errors"
-)
 
-// TODO(eriq): "Public" partitions
+   "github.com/eriq-augustine/elfs-api/model"
+)
 
 const (
    CONNECTION_STRING_DELIM = ":"
-
-   TEST_KEY = "b883738825a10c308c766db293622c4d67936f570212b9c7d0fa7f4b27ef7f5b"
-   TEST_IV = "c623e32e564f9f4746a98db7"
 )
 
+// {connectionString: driver}.
 var drivers map[string]*driver.Driver;
 
 var driverMutex *sync.Mutex;
@@ -30,7 +27,7 @@ func init() {
    drivers = make(map[string]*driver.Driver);
 }
 
-func GetDriver(connectionString string) (*driver.Driver, error) {
+func GetDriver(user *model.MemoryUser, connectionString string) (*driver.Driver, error) {
    driverMutex.Lock();
    defer driverMutex.Unlock();
 
@@ -38,19 +35,19 @@ func GetDriver(connectionString string) (*driver.Driver, error) {
    var rtn *driver.Driver = nil;
    var err error = nil;
 
+   // Before we even check to see if the driver has already been initialized,
+   // we need to ensure that this user has proper permissions for this partition
+   // (not even on the filesystem level, but on the API level).
+   // We will do this be ensuring that the user has access to this partition's key.
+   key, iv, err := getCredentials(user, connectionString);
+   if (err != nil) {
+      return nil, errors.WithStack(err);
+   }
+
+   // Now that permissions have been ensured, check if the driver has already been initialized.
    rtn, ok := drivers[connectionString];
    if (ok) {
       return rtn, nil;
-   }
-
-   key, err := hex.DecodeString(TEST_KEY);
-   if (err != nil) {
-      return nil, errors.WithStack(err);
-   }
-
-   iv, err := hex.DecodeString(TEST_IV);
-   if (err != nil) {
-      return nil, errors.WithStack(err);
    }
 
    var parts []string = strings.SplitN(connectionString, CONNECTION_STRING_DELIM, 2);
@@ -86,4 +83,21 @@ func CloseDrivers() {
    }
 
    drivers = make(map[string]*driver.Driver);
+}
+
+// Returns: Key, IV, error.
+func getCredentials(user *model.MemoryUser, connectionString string) ([]byte, []byte, error) {
+   // First check if the user has private credentials for this partition.
+   credentials, ok := user.PartitionCredentials[connectionString];
+   if (ok && credentials.PartitionKey != nil) {
+      return credentials.PartitionKey, credentials.PartitionIV, nil;
+   }
+
+   // Now check to see if this is a public partition.
+   key, iv, ok := GetPublicCredentials(connectionString);
+   if (ok) {
+      return key, iv, nil;
+   }
+
+   return nil, nil, errors.Errorf("Could not location credentials for [%s]. Maybe public parititions have not been loaded.", connectionString);
 }

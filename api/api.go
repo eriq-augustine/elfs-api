@@ -21,6 +21,8 @@ const (
    PARAM_FILE = "file"
    PARAM_ID = "id"
    PARAM_IMAGE = "image"
+   PARAM_IV = "iv"
+   PARAM_KEY = "key"
    PARAM_PASSHASH = "passhash"
    PARAM_PARTITION = "partition"
    PARAM_TOKEN = "token"
@@ -39,6 +41,15 @@ func CreateRouter(rootRedirect string) *mux.Router {
    factory.SetTokenValidator(validateToken);
 
    methods := []goapi.ApiMethod{
+      factory.NewApiMethod(
+         "auth/partitions/load",
+         loadPartitions,
+         true,
+         []goapi.ApiMethodParam{
+            {PARAM_KEY, goapi.API_PARAM_TYPE_STRING, true},
+            {PARAM_IV, goapi.API_PARAM_TYPE_STRING, true},
+         },
+      ),
       factory.NewApiMethod(
          "auth/token/request",
          requestToken,

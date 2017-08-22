@@ -7,6 +7,7 @@ import (
 
    "github.com/eriq-augustine/goapi"
    "github.com/eriq-augustine/golog"
+   "github.com/pkg/errors"
 
    "github.com/eriq-augustine/elfs/dirent"
    "github.com/eriq-augustine/elfs/driver"
@@ -21,8 +22,14 @@ import (
 func browse(username goapi.UserName, partition string, rawDirentId string) (interface{}, int, string, error) {
    golog.Debug("Serving: " + partition + "::[" + rawDirentId + "]");
 
+   apiUser, ok := auth.GetUser(string(username));
+   if (!ok) {
+      // This should never happen since we made it past the auth middleware.
+      return "", 0, "", errors.New("User does not exist");
+   }
+
    // Get the driver.
-   driver, err := fsdriver.GetDriver(partition);
+   driver, err := fsdriver.GetDriver(apiUser, partition);
    if (err != nil) {
       return "", 0, "", err;
    }

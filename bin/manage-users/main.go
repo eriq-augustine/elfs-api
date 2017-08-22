@@ -4,10 +4,8 @@ import (
    "bufio"
    "fmt"
    "os"
-   "strings"
 
    driverutil "github.com/eriq-augustine/elfs/util"
-   "github.com/howeyc/gopass"
    "golang.org/x/crypto/bcrypt"
 
    "github.com/eriq-augustine/elfs-api/auth"
@@ -29,40 +27,6 @@ func showUsage() {
    fmt.Println("   remove-fscreds (rmfsc)  - remove filesystem credentials from a user");
    fmt.Println("   edit (e)                - edit a user in the given file");
    fmt.Println("   help (h)                - print this message and exit");
-}
-
-func readLine() string {
-   text, err := reader.ReadString('\n')
-   if (err != nil) {
-      fmt.Println("Error reading line: " + err.Error());
-      os.Exit(1);
-   }
-   return strings.TrimSpace(text);
-}
-
-func readPassword() string {
-   pass, err := gopass.GetPasswd();
-   if (err != nil) {
-      panic(fmt.Sprintf("Failed to get passowrd: %v", err));
-   }
-
-   return strings.TrimSpace(string(pass));
-}
-
-func readBool(defaultValue bool) bool {
-   stringValue := strings.ToLower(readLine());
-
-   if (stringValue == "") {
-      return defaultValue;
-   } else if (stringValue == "y" || stringValue == "yes" || stringValue == "t" || stringValue == "true") {
-      return true;
-   } else if (stringValue == "n" || stringValue == "no" || stringValue == "f" || stringValue == "false") {
-      return false;
-   } else {
-      fmt.Printf("Bad boolean value: %s.\nExiting\n", stringValue);
-      os.Exit(1);
-      return false;
-   }
 }
 
 func bcryptPass(username string, password string) string {
@@ -100,13 +64,13 @@ func addUser(usersFile string) {
    }
 
    fmt.Print("Username: ");
-   username := readLine();
+   username := util.ReadLine(reader);
 
    fmt.Print("Password: ");
-   passhash := bcryptPass(username, readPassword());
+   passhash := bcryptPass(username, util.ReadPassword(reader));
 
    fmt.Print("Is Admin [y/N]: ");
-   isAdmin := readBool(false);
+   isAdmin := util.ReadBool(reader, false);
 
    usersMap[username] = &model.MemoryUser{
       DiskUser: model.DiskUser{
@@ -130,7 +94,7 @@ func addFilesystemCreds(usersFile string) {
    usersMap := auth.LoadUsersFromFile(usersFile);
 
    fmt.Print("API Username: ");
-   username := readLine();
+   username := util.ReadLine(reader);
 
    apiUser, ok := usersMap[username];
    if (!ok) {
@@ -139,7 +103,7 @@ func addFilesystemCreds(usersFile string) {
    }
 
    fmt.Print("API Password: ");
-   weakhash := util.Weakhash(username, readPassword());
+   weakhash := util.Weakhash(username, util.ReadPassword(reader));
 
    err := bcrypt.CompareHashAndPassword([]byte(apiUser.Passhash), []byte(weakhash));
    if (err != nil) {
@@ -154,18 +118,19 @@ func addFilesystemCreds(usersFile string) {
    }
 
    fmt.Print("FileSystem Connection String: ");
-   connectionString := readLine();
+   connectionString := util.ReadLine(reader);
 
    fmt.Print("FileSystem Username: ");
-   fsUsername := readLine();
+   fsUsername := util.ReadLine(reader);
 
    fmt.Print("FileSystem Password: ");
-   fsWeakhash := driverutil.ShaHash(readPassword());
+   fsWeakhash := driverutil.ShaHash(util.ReadPassword(reader));
 
    apiUser.PartitionCredentials[connectionString] = model.PartitionCredential{
       Username: fsUsername,
       Weakhash: fsWeakhash,
-      PartitionKey: "",
+      PartitionKey: nil,
+      PartitionIV: nil,
    };
 
    err = apiUser.EncryptPartitionCredentials(weakhash);
@@ -186,7 +151,7 @@ func removeUser(usersFile string) {
    usersMap := auth.LoadUsersFromFile(usersFile);
 
    fmt.Print("Username: ");
-   username := readLine();
+   username := util.ReadLine(reader);
 
    _, exists := usersMap[username];
    if (!exists) {
@@ -207,7 +172,7 @@ func showInfo(usersFile string) {
    usersMap := auth.LoadUsersFromFile(usersFile);
 
    fmt.Print("API Username: ");
-   username := readLine();
+   username := util.ReadLine(reader);
 
    apiUser, ok := usersMap[username];
    if (!ok) {
@@ -216,7 +181,7 @@ func showInfo(usersFile string) {
    }
 
    fmt.Print("API Password: ");
-   weakhash := util.Weakhash(username, readPassword());
+   weakhash := util.Weakhash(username, util.ReadPassword(reader));
 
    err := bcrypt.CompareHashAndPassword([]byte(apiUser.Passhash), []byte(weakhash));
    if (err != nil) {
@@ -242,7 +207,7 @@ func removeFilesystemCreds(usersFile string) {
    usersMap := auth.LoadUsersFromFile(usersFile);
 
    fmt.Print("API Username: ");
-   username := readLine();
+   username := util.ReadLine(reader);
 
    apiUser, ok := usersMap[username];
    if (!ok) {
@@ -251,7 +216,7 @@ func removeFilesystemCreds(usersFile string) {
    }
 
    fmt.Print("API Password: ");
-   weakhash := util.Weakhash(username, readPassword());
+   weakhash := util.Weakhash(username, util.ReadPassword(reader));
 
    err := bcrypt.CompareHashAndPassword([]byte(apiUser.Passhash), []byte(weakhash));
    if (err != nil) {
@@ -266,7 +231,7 @@ func removeFilesystemCreds(usersFile string) {
    }
 
    fmt.Print("FileSystem Connection String: ");
-   connectionString := readLine();
+   connectionString := util.ReadLine(reader);
 
    delete(apiUser.PartitionCredentials, connectionString);
 
@@ -288,30 +253,31 @@ func editUser(usersFile string) {
    usersMap := auth.LoadUsersFromFile(usersFile);
 
    fmt.Print("Username: ");
-   username := readLine();
+   username := util.ReadLine(reader);
 
-   _, exists := usersMap[username];
+   user, exists := usersMap[username];
    if (!exists) {
       fmt.Printf("User (%s) does not exist. Exiting...", username);
       os.Exit(1);
    }
 
    fmt.Print("Password: ");
-   passhash := bcryptPass(username, readPassword());
+   passhash := bcryptPass(username, util.ReadPassword(reader));
 
    fmt.Print("Is Admin [y/N]: ");
-   isAdmin := readBool(false);
+   isAdmin := util.ReadBool(reader, false);
 
    usersMap[username] = &model.MemoryUser{
       DiskUser: model.DiskUser{
          Username: username,
          Passhash: passhash,
          IsAdmin: isAdmin,
-         IV: driverutil.GenIV(),
-         CipherPartitionCredentials: nil,
+         IV: user.IV,
+         CipherPartitionCredentials: user.CipherPartitionCredentials,
       },
       PartitionCredentials: nil,
    };
+
    auth.SaveUsersFile(usersFile, usersMap);
 }
 
