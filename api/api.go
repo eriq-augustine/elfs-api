@@ -74,6 +74,22 @@ func CreateRouter(rootRedirect string) *mux.Router {
             {PARAM_ID, goapi.API_PARAM_TYPE_STRING, false},
          },
       ),
+      factory.NewApiMethod(
+         "group/get/all",
+         getGroups,
+         true,
+         []goapi.ApiMethodParam{
+            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
+         },
+      ),
+      factory.NewApiMethod(
+         "user/get/all",
+         getUsers,
+         true,
+         []goapi.ApiMethodParam{
+            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
+         },
+      ),
    };
 
    router := mux.NewRouter();

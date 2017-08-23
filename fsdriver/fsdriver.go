@@ -8,8 +8,10 @@ import (
    "sync"
 
    "github.com/eriq-augustine/elfs/driver"
+   "github.com/eriq-augustine/elfs/user"
    "github.com/pkg/errors"
 
+   "github.com/eriq-augustine/elfs-api/auth"
    "github.com/eriq-augustine/elfs-api/model"
 )
 
@@ -27,22 +29,41 @@ func init() {
    drivers = make(map[string]*driver.Driver);
 }
 
-func GetDriver(user *model.MemoryUser, connectionString string) (*driver.Driver, error) {
-   driverMutex.Lock();
-   defer driverMutex.Unlock();
-
+// Get the driver for the given connection string (initialize if necessary).
+// Also, authenticate the user for the given partition before we hand over a driver.
+func GetDriver(apiUser *model.MemoryUser, connectionString string) (*driver.Driver, user.Id, error) {
    connectionString = strings.TrimSpace(connectionString);
-   var rtn *driver.Driver = nil;
-   var err error = nil;
 
    // Before we even check to see if the driver has already been initialized,
    // we need to ensure that this user has proper permissions for this partition
    // (not even on the filesystem level, but on the API level).
    // We will do this be ensuring that the user has access to this partition's key.
-   key, iv, err := getCredentials(user, connectionString);
+   key, iv, err := getCredentials(apiUser, connectionString);
    if (err != nil) {
-      return nil, errors.WithStack(err);
+      return nil, user.EMPTY_ID, errors.WithStack(err);
    }
+
+   // Now get the actual driver.
+   driver, err := getDriverInternal(connectionString, key, iv);
+   if (err != nil) {
+      return nil, user.EMPTY_ID, errors.WithStack(err);
+   }
+
+   // Now, make sure the user can authenticate into this fs before we give them a driver.
+   userId, err := auth.AuthenticateFilesystemUser(driver, apiUser.Username);
+   if (err != nil) {
+      return nil, user.EMPTY_ID, errors.WithStack(err);
+   }
+
+   return driver, userId, nil;
+}
+
+func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.Driver, error) {
+   driverMutex.Lock();
+   defer driverMutex.Unlock();
+
+   var rtn *driver.Driver = nil;
+   var err error = nil;
 
    // Now that permissions have been ensured, check if the driver has already been initialized.
    rtn, ok := drivers[connectionString];
@@ -86,9 +107,9 @@ func CloseDrivers() {
 }
 
 // Returns: Key, IV, error.
-func getCredentials(user *model.MemoryUser, connectionString string) ([]byte, []byte, error) {
+func getCredentials(apiUser *model.MemoryUser, connectionString string) ([]byte, []byte, error) {
    // First check if the user has private credentials for this partition.
-   credentials, ok := user.PartitionCredentials[connectionString];
+   credentials, ok := apiUser.PartitionCredentials[connectionString];
    if (ok && credentials.PartitionKey != nil) {
       return credentials.PartitionKey, credentials.PartitionIV, nil;
    }

@@ -5,18 +5,17 @@ import (
    "net/http"
    "path"
 
+   "github.com/eriq-augustine/elfs/dirent"
+   "github.com/eriq-augustine/elfs/driver"
+   "github.com/eriq-augustine/elfs/user"
    "github.com/eriq-augustine/goapi"
    "github.com/eriq-augustine/golog"
    "github.com/pkg/errors"
 
-   "github.com/eriq-augustine/elfs/dirent"
-   "github.com/eriq-augustine/elfs/driver"
-   "github.com/eriq-augustine/elfs/user"
    "github.com/eriq-augustine/elfs-api/auth"
+   "github.com/eriq-augustine/elfs-api/fsdriver"
    "github.com/eriq-augustine/elfs-api/messages"
    "github.com/eriq-augustine/elfs-api/model"
-
-   "github.com/eriq-augustine/elfs-api/fsdriver"
 );
 
 func browse(username goapi.UserName, partition string, rawDirentId string) (interface{}, int, string, error) {
@@ -29,15 +28,9 @@ func browse(username goapi.UserName, partition string, rawDirentId string) (inte
    }
 
    // Get the driver.
-   driver, err := fsdriver.GetDriver(apiUser, partition);
+   driver, userId, err := fsdriver.GetDriver(apiUser, partition);
    if (err != nil) {
       return "", 0, "", err;
-   }
-
-   // Auth the user for this partition.
-   userId, err := auth.AuthenticateFilesystemUser(driver, string(username));
-   if (err != nil) {
-      return "", http.StatusUnauthorized, "", err;
    }
 
    var direntId dirent.Id = dirent.Id(rawDirentId);
