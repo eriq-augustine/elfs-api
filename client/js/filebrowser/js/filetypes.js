@@ -22,6 +22,7 @@ filebrowser.filetypes.extensions = filebrowser.filetypes.extensions || {
    '':      {fileClass: 'text', mime: 'text/plain'}, // Treat no extension files as text.
    'nfo':   {fileClass: 'text', mime: 'text/plain'},
    'txt':   {fileClass: 'text', mime: 'text/plain'},
+   'vtt':   {fileClass: 'text', mime: 'text/plain'},
 
    'mp3':   {fileClass: 'audio', mime: 'audio/mpeg'},
    'ogg':   {fileClass: 'audio', mime: 'audio/ogg'},
@@ -176,12 +177,6 @@ function _renderAudio(file) {
       .replace('{{MIME}}', filebrowser.filetypes.extensions[file.extension].mime);
 }
 
-function _renderVideo(file) {
-   return filebrowser.filetypes.templates.video
-      .replace('{{RAW_URL}}', file.directLink)
-      .replace('{{MIME}}', filebrowser.filetypes.extensions[file.extension].mime);
-}
-
 function _renderImage(file) {
    return filebrowser.filetypes.templates.image
       .replace('{{RAW_URL}}', file.directLink)
@@ -192,6 +187,161 @@ function _renderImage(file) {
 function _renderUnsupported(file) {
    return filebrowser.filetypes.templates.unsupported.replace('{{EXTENSION}}', file.extension);
 }
+
+function _renderVideo(file) {
+   var poster = filebrowser.filetypes._fetchPoster(file);
+   var subs = filebrowser.filetypes._fetchSubs(file);
+
+   var subTracks = [];
+   var count = 0;
+
+   subs.forEach(function(sub) {
+      var track = filebrowser.filetypes.templates.subtitleTrack;
+      track = track.replace('{{SUB_LINK}}', sub.link);
+      track = track.replace('{{SUB_LANG}}', sub.lang);
+      track = track.replace('{{SUB_LABEL}}', sub.subId);
+
+      subTracks.push(track);
+   });
+
+   var ext = filebrowser.util.ext(file.name);
+   var mime = '';
+   if (filebrowser.filetypes.extensions[ext]) {
+      mime = filebrowser.filetypes.extensions[ext].mime;
+   }
+
+   var videoHTML = filebrowser.filetypes.templates.video;
+
+   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', file.extraInfo.cacheLink || file.directLink);
+   videoHTML = videoHTML.replace('{{MIME_TYPE}}', mime);
+   videoHTML = videoHTML.replace('{{SUB_TRACKS}}', subTracks.join());
+
+   return {html: videoHTML, callback: filebrowser.filetypes._initVideo.bind(this, file, poster)};
+}
+
+filebrowser.filetypes._initVideo = function(file, poster) {
+   if (videojs.getPlayers()['main-video-player']) {
+      videojs.getPlayers()['main-video-player'].dispose();
+   }
+
+   videojs('main-video-player', {
+      controls: true,
+      preload: 'auto',
+      poster: poster || ''
+   });
+}
+
+filebrowser.filetypes._fetchSubs = function(file) {
+   // List the parent and see if there are anything that looks like subs.
+   // Subtitle files look like: /<base name>([_\.]<lang>)?([_\.]\d+)?.vtt/
+   // We only support webvtt subs.
+
+   var subs = [];
+   var parentDir = filebrowser.cache.listingFromCache(file.parentId);
+
+   for (var i = 0; i < parentDir.children.length; i++) {
+      var child = parentDir.children[i];
+
+      // Skip this file.
+      if (child.id == file.id) {
+         continue;
+      }
+
+      // Only support webvtt.
+      if (child.extension != 'vtt') {
+         continue;
+      }
+
+      if (!child.basename.startsWith(file.basename)) {
+         continue;
+      }
+
+      var text = child.basename.replace(file.basename, '').replace(/^[\._]/, '');
+      var lang = 'unknown';
+      // We will fill these in later.
+      var subId = '?';
+
+      var parts = text.split(/[\._]/);
+
+      // JS will give a single empty string if you try to split an empty string.
+      if (parts.length == 1 && parts[0] == '') {
+         parts.pop();
+      }
+
+      if (parts.length == 2) {
+         lang = parts[0];
+         subId = parts[1];
+      } else if (parts.length == 1 && parts[0].match(/^\d+$/)) {
+         subId = parts[0];
+      } else if (parts.length == 1) {
+         lang = parts[0];
+      }
+
+      subs.push({
+         lang: lang,
+         subId: subId,
+         link: child.directLink,
+      });
+   }
+
+   // Now that we have seen all the subs, fill in any missing ids.
+   var nextId = subs.length;
+   subs.forEach(function(sub) {
+      if (sub.subId == '?') {
+         sub.subId = nextId++;
+      } else if (sub.subId.match(/^\d+/)) {
+         sub.subId = parseInt(sub.subId, 10);
+      }
+   });
+
+   subs.sort(function(a, b) {
+      if (a.lang == b.lang) {
+         return a.subId - b.subId;
+      }
+
+      return a.lang.localCompare(b.lang);
+   });
+
+   return subs;
+}
+
+filebrowser.filetypes._fetchPoster = function(file) {
+   // List the parent and see if there are anything that looks like a poster.
+   // A poster looks likes one of the following:
+   //  - A file with the same basename as the video file, but an image extension.
+   //  - An image with with the basename: 'poster'.
+
+   var parentDir = filebrowser.cache.listingFromCache(file.parentId);
+
+   var posterFile = undefined;
+   for (var i = 0; i < parentDir.children.length; i++) {
+      var child = parentDir.children[i];
+
+      // Skip this file.
+      if (child.id == file.id) {
+         continue;
+      }
+
+      // A file with the same basename and image extension has top priority.
+      if (child.basename == file.basename && filebrowser.filetypes.getFileClass(child) == 'image') {
+         posterFile = child;
+         break;
+      }
+
+      // If we fine "poster.*" log it, but keep looking.
+      if (child.basename.toLowerCase() == 'poster' && filebrowser.filetypes.getFileClass(child) == 'image') {
+         posterFile = child;
+      }
+   }
+
+   if (!posterFile) {
+      return '';
+   }
+
+   return posterFile.directLink;
+}
+
+// templates
 
 filebrowser.filetypes.templates.general = `
    <div class='center'>
@@ -220,13 +370,22 @@ filebrowser.filetypes.templates.image = `
    <img class='filebrowser-image' src='{{RAW_URL}}' title='{{BASE_NAME}}' alt='{{BASE_NAME}}'>
 `;
 
+filebrowser.filetypes.templates.subtitleTrack = `
+   <track kind="subtitles" src="{{SUB_LINK}}" srclang="{{SUB_LANG}}" label="{{SUB_LABEL}}"></track>
+`;
+
 filebrowser.filetypes.templates.unsupported = `
    <h2>File type ({{EXTENSION}}) is not supported.</h2>
 `;
 
 filebrowser.filetypes.templates.video = `
-   <video controls>
-      <source src='{{RAW_URL}}' type='{{MIME}}'>
-      Browser Not Supported
+   <video
+      id='main-video-player'
+      class='video-player video-js vjs-default-skin vjs-big-play-centered'
+   >
+      <source src='{{VIDEO_LINK}}' type='{{MIME_TYPE}}'>
+
+      {{SUB_TRACKS}}
+      Browser not supported.
    </video>
 `;

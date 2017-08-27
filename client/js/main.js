@@ -29,13 +29,7 @@ mediaserver._init = function() {
    $('.content').empty().append(mediaserver._contentTemplate);
 
    // Init the file browser.
-   // TODO(eriq): Make the video default.
-   var options = {
-      renderOverrides: {
-         video: mediaserver._renderVideo
-      }
-   };
-   filebrowser.init('mediaserver-filebrowser', mediaserver._fetch, options);
+   filebrowser.init('mediaserver-filebrowser', mediaserver._fetch, {});
 
    // If there is a valid hash path, follow it.
    // Otherwise, set up a new hash at root.

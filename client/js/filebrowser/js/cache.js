@@ -1,5 +1,7 @@
 "use strict";
 
+// The cache will always guarentee that a cached dirent's parent has been loaded.
+
 var filebrowser = filebrowser || {};
 filebrowser.cache = filebrowser.cache || {};
 
@@ -39,7 +41,9 @@ filebrowser.cache.loadCache = function(id, callback) {
       // If the parent is cached, then just callback.
       // Otherwise, we need to cache it.
       if (filebrowser.cache.listingFromCache(dirent.parentId)) {
-         callback();
+         if (callback) {
+            callback();
+         }
       } else {
          filebrowser.cache.loadCache(dirent.parentId, callback);
       }
