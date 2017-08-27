@@ -5,9 +5,11 @@ filebrowser.initFields = filebrowser.initFields || {};
 
 filebrowser.initFields._containerTemplate = `
    <div class='filebrowser-head-area'>
-      <div class='filebrowser-breadcrumbs-area'>
-      </div>
-      <div class='filebrowser-context-actions-area'>
+      <div class='filebrowser-head-content'>
+         <div class='filebrowser-breadcrumbs-area'>
+         </div>
+         <div class='filebrowser-context-actions-area'>
+         </div>
       </div>
    </div>
    <div class='filebrowser-body-area'>

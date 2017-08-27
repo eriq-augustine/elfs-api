@@ -78,11 +78,15 @@ filebrowser.nav._buildBreadcrumbs = function(listing) {
    while (true) {
       breadcrumbs.unshift({display: listing.name, id: listing.id});
 
-      if (!listing.parentId) {
+      // Root it its own parent.
+      if (!listing.parentId || listing.parentId == listing.id) {
          break;
       }
       listing = filebrowser.cache.listingFromCache(listing.parentId);
    }
+
+   // Make sure to add in root.
+   breadcrumbs.unshift({display: '/', id: ''});
 
    return breadcrumbs;
 }
@@ -93,8 +97,8 @@ filebrowser.nav._buildBreadcrumbs = function(listing) {
 filebrowser.nav.encodeForHash = function(id) {
    var encodePath = encodeURIComponent(id);
 
-   // Unreplace the slash (%2F) and space (%20).
-   return encodePath.replace(/%2F/g, '/').replace(/%20/g, ' ');
+   // Unreplace the slash (%2F), space (%20), and colon (%3A).
+   return encodePath.replace(/%2F/g, '/').replace(/%20/g, ' ').replace(/%3A/g, ':');
 }
 
 // Remove the leading hash and decode the id
