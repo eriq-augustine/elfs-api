@@ -122,3 +122,27 @@ func getCredentials(apiUser *model.MemoryUser, connectionString string) ([]byte,
 
    return nil, nil, errors.Errorf("Could not location credentials for [%s]. Maybe public parititions have not been loaded.", connectionString);
 }
+
+// Get connection strings for all the partitions this user has access to.
+func GetAvailablePartitions(apiUser *model.MemoryUser) []string {
+   // We will need to dedup the partitions since it is possible for a user to have
+   // credentials for a public partition.
+   var partitions map[string]bool = make(map[string]bool);
+
+   // First add the public partitions.
+   for connectionString, _ := range(publicPartitions) {
+      partitions[connectionString] = true;
+   }
+
+   // Now get the private partitions.
+   for connectionString, _ := range(apiUser.PartitionCredentials) {
+      partitions[connectionString] = true;
+   }
+
+   var rtn []string = make([]string, 0, len(partitions));
+   for connectionString, _ := range(partitions) {
+      rtn = append(rtn, connectionString);
+   }
+
+   return rtn;
+}

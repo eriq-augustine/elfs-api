@@ -92,6 +92,12 @@ func CreateRouter(rootRedirect string) *mux.Router {
          },
       ),
       factory.NewApiMethod(
+         "partition/get/all",
+         getPartitions,
+         true,
+         []goapi.ApiMethodParam{},
+      ),
+      factory.NewApiMethod(
          "user/get/all",
          getUsers,
          true,
