@@ -246,8 +246,8 @@ filebrowser.view.loadBreadcrumbs = function(breadcrumbs) {
       breadcrumbElement.appendChild(breadcrumbTextElement);
       breadcrumbsElement.appendChild(breadcrumbElement);
 
-      // Don't put separators after the first or last elements.
-      if (index != 0 && index != breadcrumbs.length - 1) {
+      // Don't put a separator after the last element.
+      if (index != breadcrumbs.length - 1) {
          var separator = document.createElement('span');
          separator.className = 'filebrowser-breadcrumb-separator';
          separator.textContent = '/';

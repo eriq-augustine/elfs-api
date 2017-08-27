@@ -62,10 +62,10 @@ filebrowser.nav._updateCurrentTarget = function(id, listing) {
    }
 
    // Change the page's title.
-   document.title = filebrowser.util.basename(id);
+   document.title = listing.name;
 
    // Update the breadcrumbs.
-   filebrowser.view.loadBreadcrumbs(filebrowser.nav._buildBreadcrumbs(id));
+   filebrowser.view.loadBreadcrumbs(filebrowser.nav._buildBreadcrumbs(listing));
 
    // Update any context actions.
    filebrowser.view.loadContextActions(listing, id);
@@ -78,10 +78,10 @@ filebrowser.nav._buildBreadcrumbs = function(listing) {
    while (true) {
       breadcrumbs.unshift({display: listing.name, id: listing.id});
 
-      if (!listing.parent) {
+      if (!listing.parentId) {
          break;
       }
-      listing = filebrowser.cache.listingFromCache(listing.parent);
+      listing = filebrowser.cache.listingFromCache(listing.parentId);
    }
 
    return breadcrumbs;

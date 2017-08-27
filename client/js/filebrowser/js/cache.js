@@ -26,15 +26,22 @@ filebrowser.cache.listingFromCache = function(id) {
    return undefined;
 }
 
+// Fetch and load not just the given entry, but also ensure that all parents until root are also cached.
 filebrowser.cache.loadCache = function(id, callback) {
-   filebrowser.customFetch(id, function(isDir, data) {
-      data.cacheTime = new Date();
+   filebrowser.customFetch(id, function(isDir, dirent) {
+      dirent.cacheTime = new Date();
       if (isDir) {
-         filebrowser.cache._dirCache[id] = data;
+         filebrowser.cache._dirCache[id] = dirent;
       } else {
-         filebrowser.cache._fileCache[id] = data;
+         filebrowser.cache._fileCache[id] = dirent;
       }
 
-      callback();
+      // If the parent is cached, then just callback.
+      // Otherwise, we need to cache it.
+      if (filebrowser.cache.listingFromCache(dirent.parentId)) {
+         callback();
+      } else {
+         filebrowser.cache.loadCache(dirent.parentId, callback);
+      }
    });
 }

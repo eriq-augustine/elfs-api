@@ -9,9 +9,10 @@ mediaserver._convertBackendDirEntry = function(dirEntry) {
 
    if (dirEntry.IsFile) {
       return new filebrowser.File(dirEntry.Id, dirEntry.Name, new Date(dirEntry.ModTimestamp),
-            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry));
+            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry), dirEntry.Parent);
    } else {
-      return new filebrowser.Dir(dirEntry.Id, dirEntry.Name, new Date(dirEntry.ModTimestamp));
+      return new filebrowser.Dir(dirEntry.Id, dirEntry.Name, new Date(dirEntry.ModTimestamp),
+            dirEntry.Parent);
    }
 }
 
@@ -45,9 +46,6 @@ mediaserver._fetch = function(id, callback) {
          console.log(textStatus);
       },
       success: function(data) {
-         // TEST
-         console.log(data);
-
          if (!data.Success) {
             // TODO(eriq): more
             console.log("Unable to get listing");

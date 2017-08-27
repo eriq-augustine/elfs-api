@@ -2,27 +2,28 @@
 
 var filebrowser = filebrowser || {};
 
-filebrowser.DirEnt = function(id, name, modDate, size, isDir) {
+filebrowser.DirEnt = function(id, name, modDate, size, isDir, parentId) {
    this.id = id;
    this.name = name;
    this.modDate = modDate;
    this.size = size;
    this.isDir = isDir;
+   this.parentId = parentId;
    this.cacheTime = null;
 }
 
-filebrowser.Dir = function(id, name, modDate) {
-   filebrowser.DirEnt.call(this, id, name, modDate, 0, true);
+filebrowser.Dir = function(id, name, modDate, parentId) {
+   filebrowser.DirEnt.call(this, id, name, modDate, 0, true, parentId);
    this.children = [];
 }
 
 filebrowser.Dir.prototype = Object.create(filebrowser.DirEnt.prototype);
 filebrowser.Dir.prototype.constructor = filebrowser.Dir;
 
-filebrowser.File = function(id, name, modDate, size, directLink, extraInfo) {
+filebrowser.File = function(id, name, modDate, size, directLink, parentId, extraInfo) {
    extraInfo = extraInfo || {};
 
-   filebrowser.DirEnt.call(this, id, name, modDate, size, false);
+   filebrowser.DirEnt.call(this, id, name, modDate, size, false, parentId);
    this.extraInfo = extraInfo;
    this.directLink = directLink;
 
