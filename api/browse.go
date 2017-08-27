@@ -18,6 +18,11 @@ import (
    "github.com/eriq-augustine/elfs-api/model"
 );
 
+// Add webvtt into the mime type.
+func init() {
+   mime.AddExtensionType(".vtt", "text/vtt");
+}
+
 func browse(username goapi.UserName, partition string, rawDirentId string) (interface{}, int, error) {
    golog.Debug("Serving: " + partition + "::[" + rawDirentId + "]");
 
