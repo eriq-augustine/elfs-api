@@ -40,7 +40,7 @@ func CreateRouter(rootRedirect string) *mux.Router {
    factory.SetLogger(golog.Logger{});
    factory.SetTokenValidator(validateToken);
 
-   methods := []goapi.ApiMethod{
+   methods := []*goapi.ApiMethod{
       factory.NewApiMethod(
          "auth/partitions/load",
          loadPartitions,
@@ -75,6 +75,15 @@ func CreateRouter(rootRedirect string) *mux.Router {
          },
       ),
       factory.NewApiMethod(
+         "contents",
+         getFileContents,
+         true,
+         []goapi.ApiMethodParam{
+            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
+            {PARAM_ID, goapi.API_PARAM_TYPE_STRING, true},
+         },
+      ).SetAllowTokenParam(true),
+      factory.NewApiMethod(
          "group/get/all",
          getGroups,
          true,
@@ -98,7 +107,7 @@ func CreateRouter(rootRedirect string) *mux.Router {
    }
 
    // Handle 404 specially.
-   var notFoundApiMethod goapi.ApiMethod = factory.NewApiMethod(
+   var notFoundApiMethod *goapi.ApiMethod = factory.NewApiMethod(
       "__404__", // We will not actually bind 404 to a path, so just use something to pass validation.
       notFound,
       true, // We don't give hints about our API, so require auth for everything.

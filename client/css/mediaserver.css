@@ -1,0 +1,113 @@
+.page {
+   width: 100%;
+   height: 100%;
+   overflow: auto;
+   background-color: #444d6a;
+   font-family: "Lucida Console", Monaco, monospace;
+}
+
+.content {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: nowrap;
+   align-items: flex-start;
+   justify-content: space-between;
+}
+
+.filebrowser-body-content {
+   width: 100%;
+   height: 100%;
+}
+
+.filebrowser-body-content > iframe  {
+   width: 100%;
+   height: 100%;
+}
+
+#mediaserver-filebrowser {
+   flex-grow: 1;
+}
+
+.video-player {
+   margin-left: auto;
+   margin-right: auto;
+   max-height: 100%;
+   max-width: 100%;
+}
+
+.encode-activity-container {
+   display: none; /* Start hidden and show when we get data. */
+   height: 100%;
+   max-width: 300px;
+   margin-top: 10px;
+   margin-right: 10px;
+   background-color: #292f40;
+   border-radius: 5px;
+   box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
+}
+
+.encode-activity-section {
+   text-align: center;
+   padding: 10px;
+}
+
+.encode-list-element-placebolder {
+   color: #DDE3F3;
+   font-size: 16px;
+}
+
+.encode-list-element {
+   cursor: pointer;
+   margin-bottom: 10px;
+}
+
+.encode-list-element a {
+   color: #DDE3F3;
+   font-size: 20px;
+   word-wrap: break-word;
+   text-decoration: none;
+}
+
+.encode-list-element progress {
+   margin-top: 10px;
+}
+
+.encode-activity-section p {
+   color: #44556f;
+   font-size: 20px;
+   font-weight: bold;
+   margin-bottom: 10px;
+}
+
+/* Login Page */
+.login-area {
+   width: 300px;
+   margin-top: 50px;
+   margin-left: auto;
+   margin-right: auto;
+   background-color: #292f40;
+   text-align: center;
+   padding: 30px;
+   border-radius: 5px;
+   box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
+}
+
+.login-area h2 {
+   color: #DDE3F3;
+   font-size: 32px;
+   margin-bottom: 10px;
+}
+
+.login-area input[type=text],
+.login-area input[type=password] {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   margin-bottom: 10px;
+   width: 60%;
+}
+
+.login-area input[type=submit] {
+   font-size: 20px;
+   font-family: "Lucida Console", Monaco, monospace;
+}

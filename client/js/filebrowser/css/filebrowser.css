@@ -1,0 +1,121 @@
+.filebrowser-container {
+   height: 100%;
+   padding: 10px;
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+   align-items: stretch;
+   justify-content: space-between;
+}
+
+.filebrowser-head-area {
+   min-height: 1em;
+   display: flex;
+   flex-direction: row;
+   flex-wrap: nowrap;
+   align-content: stretch;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.filebrowser-context-actions-area {
+   padding-right: 10px;
+}
+
+.filebrowser-context-actions-area i {
+   font-size: 20px;
+   color: #DDE3F3;
+   cursor: pointer;
+   margin-left: 10px;
+}
+
+.filebrowser-head-area,
+.filebrowser-body-area {
+   padding: 5px;
+   background-color: #292f40;
+   border-radius: 5px;
+   box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
+}
+
+.filebrowser-body-content p {
+   color: #DDE3F3;
+   font-size: 20px;
+   text-align: center;
+}
+
+.filebrowser-breadcrumbs {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   justify-content: flex-start;
+   align-items: center;
+}
+
+.filebrowser-breadcrumb {
+}
+
+.filebrowser-breadcrumb-element {
+   padding-right: 10px;
+   padding-left: 10px;
+   font-size: 20px;
+   font-weight: bold;
+   color: #DDE3F3;
+   text-decoration: none;
+}
+
+/* Don't give special styling to the last element. */
+.filebrowser-breadcrumbs > .filebrowser-breadcrumb:last-child span {
+   color: #44556f;
+   cursor: inherit;
+   font-weight: inherit;
+}
+
+.filebrowser-breadcrumb-separator {
+   color: #44556f;
+}
+
+.filebrowser-body-area {
+   flex-grow: 1;
+   margin-top: 10px;
+}
+
+.filebrowser-body-content img.filebrowser-image {
+   max-width: 100%;
+}
+
+.filebrowser-label-container {
+   font-size: 20px;
+   color: #DDE3F3;
+   text-decoration: none;
+}
+
+.filebrowser-icon-board {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   align-items: flex-start;
+   align-content: flex-start;
+   justify-content: flex-start;
+}
+
+.filebrowser-icon-listing .filebrowser-label-container {
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+   justify-content: flex-start;
+   align-items: center;
+}
+
+.filebrowser-icon-listing {
+   width: 200px;
+   padding: 10px;
+}
+
+.filebrowser-icon-listing span {
+   word-break: break-word;
+}
+
+.filebrowser-icon-listing i {
+   font-size: 75px;
+   margin-bottom: 10px;
+}
