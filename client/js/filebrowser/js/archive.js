@@ -136,14 +136,14 @@ filebrowser.archive._connectParents = function(dirents, dirs, fileInfo) {
          dirents[path].parentId = dirs[parentPath].id;
 
          // Also connect the child on the parent's side.
-         // Shallow copy is sufficient.
-         dirs[parentPath].children.push(jQuery.extend({}, dirents[path]));
+         // Use the same memory.
+         dirs[parentPath].children.push(dirents[path]);
       } else {
          // Any entry without a parent gets the archive as a parent.
          dirents[path].parentId = fileInfo.id;
 
          // Stach away the root children specially.
-         fileInfo.archiveChildren.push(jQuery.extend({}, dirents[path]));
+         fileInfo.archiveChildren.push(dirents[path]);
       }
    }
 }

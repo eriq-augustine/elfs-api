@@ -137,15 +137,17 @@ filebrowser.view.loadBrowserContent = function(listing, files, id) {
 
 filebrowser.view._loadGalleryView = _loadGalleryView;
 function _loadGalleryView(listing, files, id) {
+   var data = [];
+
    var gallery = document.createElement('div');
-   gallery.className = 'fotorama';
-   gallery.setAttribute('data-auto', false);
-   gallery.setAttribute('data-keyboard', true);
-   gallery.setAttribute('data-allowfullscreen', 'native');
-   gallery.setAttribute('data-nav', 'thumbs');
-   gallery.setAttribute('data-loop', true);
-   gallery.setAttribute('data-transitionduration', 100);
-   gallery.setAttribute('data-width', '100%');
+   gallery.className = 'galleria';
+
+   Galleria.configure({
+      autoplay: false,
+      clicknext: true,
+      preload: 10,
+      transitionSpeed: 100,
+   });
 
    // Make sure that there are images here.
    // If not, bail out to listing view.
@@ -157,13 +159,10 @@ function _loadGalleryView(listing, files, id) {
       }
       hasImage = true;
 
-      var imageLink = document.createElement('a');
-      imageLink.setAttribute('href', file.directLink);
-      imageLink.setAttribute('title', file.name);
-      imageLink.setAttribute('alt', file.name);
-      imageLink.setAttribute('data-caption', file.name);
-
-      gallery.appendChild(imageLink);
+      data.push({
+         image: file.directLink,
+         title: file.name,
+      });
    });
 
    if (!hasImage) {
@@ -174,7 +173,9 @@ function _loadGalleryView(listing, files, id) {
    filebrowser.view.clearContent();
    $(filebrowser.bodyContentQuery).append(gallery);
 
-   $('.fotorama').fotorama();
+   Galleria.run('.galleria', {
+      dataSource: data
+   });
 }
 
 filebrowser.view._loadIconView = _loadIconView;

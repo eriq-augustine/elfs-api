@@ -159,3 +159,9 @@
    width: 100%;
    margin-top: 25px;
 }
+
+/* Gallery */
+.filebrowser-body-content .galleria {
+   height: 100%;
+   width: 100%;
+}
