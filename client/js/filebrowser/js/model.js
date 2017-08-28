@@ -26,6 +26,8 @@ filebrowser.File = function(id, name, modDate, size, directLink, parentId, extra
    filebrowser.DirEnt.call(this, id, name, modDate, size, false, parentId);
    this.extraInfo = extraInfo;
    this.directLink = directLink;
+   this.isExtractedArchive = false;
+   this.archiveChildren = [];
 
    if (name.indexOf('.') > -1) {
       var nameParts = name.match(/^(.*)\.([^\.]*)$/);

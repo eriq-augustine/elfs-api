@@ -15,28 +15,23 @@ window.addEventListener("hashchange", function(newValue) {
    }
 });
 
-filebrowser.nav.changeTarget = function(id, count, firstLoad) {
-   count = count || 0;
-
+filebrowser.nav.changeTarget = function(id, force) {
    // Do nothing if we are already pointing to the target.
    // Be careful that we don't block the first load.
-   if (!firstLoad && filebrowser.nav.getCurrentTargetPath() == id) {
+   if (!force && filebrowser.nav.getCurrentTargetPath() == id) {
       return;
    }
 
    var listing = filebrowser.cache.listingFromCache(id);
    if (!listing) {
-      filebrowser.cache.loadCache(id, filebrowser.nav.changeTarget.bind(window, id, count + 1, firstLoad));
+      filebrowser.cache.loadCache(id, filebrowser.nav.changeTarget.bind(window, id, force));
       return;
    }
 
    if (listing.isDir) {
-      // TODO(eriq): This can probably be streamlined.
-      var files = [];
-      $.each(listing.children, function(index, child) {
-         files.push(child);
-      });
-      filebrowser.view.loadBrowserContent(listing, files, id);
+      filebrowser.view.loadBrowserContent(listing, listing.children, id);
+   } else if (listing.isExtractedArchive) {
+      filebrowser.view.loadBrowserContent(listing, listing.archiveChildren, id);
    } else {
       filebrowser.view.loadViewer(listing, id);
    }

@@ -24,6 +24,12 @@ filebrowser.util.basename = function(path) {
    return path.split(/[\\/]/).pop();
 }
 
+// Get the dir of a path (path - basename(path)).
+filebrowser.util.dir = function(path) {
+   var basename = filebrowser.util.basename(path);
+   return path.slice(0, path.lastIndexOf(basename)).replace(/\//, '');
+}
+
 // See http://stackoverflow.com/questions/190852/how-can-i-get-file-extensions-with-javascript/1203361#1203361
 filebrowser.util.ext = function(path) {
    return path.substr((~-path.lastIndexOf(".") >>> 0) + 2).toLowerCase();

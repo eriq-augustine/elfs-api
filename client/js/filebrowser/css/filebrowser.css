@@ -37,6 +37,16 @@
    box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
 }
 
+.filebrowser-body-area button {
+   text-align: center;
+   font-size: 32px;
+   padding: 20px;
+   border-radius: 10px;
+   box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
+   background-color: #DDE3F3;
+   color: #292f40;
+}
+
 .filebrowser-body-content p {
    color: #DDE3F3;
    font-size: 20px;
@@ -118,4 +128,34 @@
 .filebrowser-icon-listing i {
    font-size: 75px;
    margin-bottom: 10px;
+}
+
+.filebrowser-text-center {
+   text-align: center;
+}
+
+/* Modal */
+.filebrowser-modal .tingle-modal-box {
+   background-color: #d9e0ea;
+}
+
+.filebrowser-modal-content {
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+
+.filebrowser-modal-loader {
+   width: 100px;
+   height: 100px;
+}
+
+.filebrowser-modal-loader .boxes-loader {
+   position: static;
+   margin: 0;
+   height: 100%;
+   width: 100%;
+   margin-top: 25px;
 }

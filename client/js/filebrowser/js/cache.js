@@ -31,12 +31,7 @@ filebrowser.cache.listingFromCache = function(id) {
 // Fetch and load not just the given entry, but also ensure that all parents until root are also cached.
 filebrowser.cache.loadCache = function(id, callback) {
    filebrowser.customFetch(id, function(isDir, dirent) {
-      dirent.cacheTime = new Date();
-      if (isDir) {
-         filebrowser.cache._dirCache[id] = dirent;
-      } else {
-         filebrowser.cache._fileCache[id] = dirent;
-      }
+      filebrowser.cache.cachePut(id, dirent);
 
       // If the parent is cached, then just callback.
       // Otherwise, we need to cache it.
@@ -48,4 +43,15 @@ filebrowser.cache.loadCache = function(id, callback) {
          filebrowser.cache.loadCache(dirent.parentId, callback);
       }
    });
+}
+
+// A direct put straight into the cache.
+// This should very rarely be called by the user.
+filebrowser.cache.cachePut = function(id, dirent) {
+   dirent.cacheTime = Date.now();
+   if (dirent.isDir) {
+      filebrowser.cache._dirCache[id] = dirent;
+   } else {
+      filebrowser.cache._fileCache[id] = dirent;
+   }
 }

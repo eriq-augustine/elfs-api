@@ -7,15 +7,16 @@ filebrowser.filetypes.templates = filebrowser.filetypes.templates || {};
 filebrowser.filetypes.overrides = filebrowser.filetypes.overrides || {};
 
 filebrowser.filetypes.fileClasses = filebrowser.filetypes.fileClasses || {
-   'text':     {renderFunction: _renderGeneralIFrame, icon: 'file-text-o'},
-   'audio':    {renderFunction: _renderAudio,         icon: 'file-audio-o'},
-   'image':    {renderFunction: _renderImage,         icon: 'file-image-o'},
-   'general':  {renderFunction: _renderGeneral,       icon: 'file-o'},
-   'iframe':   {renderFunction: _renderGeneralIFrame, icon: 'file-o'},
-   'html':     {renderFunction: _renderGeneralIFrame, icon: 'file-code-o'},
-   'video':    {renderFunction: _renderVideo,         icon: 'file-video-o'},
-   'code':     {renderFunction: _renderGeneralIFrame, icon: 'file-code-o'},
-   'archive':  {renderFunction: _renderGeneralIFrame, icon: 'file-archive-o'},
+   'text':       {renderFunction: _renderGeneralIFrame, icon: 'file-text-o'},
+   'audio':      {renderFunction: _renderAudio,         icon: 'file-audio-o'},
+   'image':      {renderFunction: _renderImage,         icon: 'file-image-o'},
+   'general':    {renderFunction: _renderGeneral,       icon: 'file-o'},
+   'iframe':     {renderFunction: _renderGeneralIFrame, icon: 'file-o'},
+   'html':       {renderFunction: _renderGeneralIFrame, icon: 'file-code-o'},
+   'video':      {renderFunction: _renderVideo,         icon: 'file-video-o'},
+   'code':       {renderFunction: _renderGeneralIFrame, icon: 'file-code-o'},
+   'ex-archive': {renderFunction: _renderArchive,       icon: 'file-archive-o'},
+   'archive':    {renderFunction: _renderGeneral,       icon: 'file-archive-o'},
 };
 
 filebrowser.filetypes.extensions = filebrowser.filetypes.extensions || {
@@ -83,6 +84,10 @@ filebrowser.filetypes.extensions = filebrowser.filetypes.extensions || {
    'tex':   {fileClass: 'code', mime: 'application/x-tex'},
    'vb':    {fileClass: 'code', mime: 'text/plain'},
 
+   // Archives we know how to open.
+   'zip':   {fileClass: 'ex-archive', mime: 'application/x-zip'},
+
+   // Archives we do not know how to open.
    'bz':    {fileClass: 'archive', mime: 'application/x-bzip'},
    'bz2':   {fileClass: 'archive', mime: 'application/x-bzip2'},
    'gz':    {fileClass: 'archive', mime: 'application/x-gzip'},
@@ -91,7 +96,6 @@ filebrowser.filetypes.extensions = filebrowser.filetypes.extensions || {
    'tar':   {fileClass: 'archive', mime: 'application/x-tar'},
    'tar.gz':{fileClass: 'archive', mime: 'application/x-gzip'},
    'tar.bz':{fileClass: 'archive', mime: 'application/x-bzip'},
-   'zip':   {fileClass: 'archive', mime: 'application/x-zip'},
    '7z':    {fileClass: 'archive', mime: 'application/x-7z-compressed'},
 };
 
@@ -156,6 +160,14 @@ filebrowser.filetypes.getFileClass = function(file) {
    return undefined;
 }
 
+filebrowser.filetypes.getMimeForExension = function(ext) {
+   if (filebrowser.filetypes.extensions[ext]) {
+      return filebrowser.filetypes.extensions[ext].mime;
+   }
+
+   return 'text/plain';
+}
+
 function _renderGeneralIFrame(file) {
    return filebrowser.filetypes.templates.generalIFrame
       .replace('{{RAW_URL}}', file.directLink);
@@ -168,7 +180,18 @@ function _renderGeneral(file) {
       .replace('{{SIZE}}', filebrowser.util.bytesToHuman(file.size))
       .replace('{{TYPE}}', filebrowser.filetypes.getFileClass(file) || 'unknown')
       .replace('{{RAW_URL}}', file.directLink)
+      .replace('{{DOWNLOAD_NAME}}', file.name);
+}
+
+function _renderArchive(file) {
+   return filebrowser.filetypes.templates.archive
+      .replace('{{FULL_NAME}}', file.name)
+      .replace('{{MOD_TIME}}', filebrowser.util.formatDate(file.modDate))
+      .replace('{{SIZE}}', filebrowser.util.bytesToHuman(file.size))
+      .replace('{{TYPE}}', filebrowser.filetypes.getFileClass(file) || 'unknown')
+      .replace('{{RAW_URL}}', file.directLink)
       .replace('{{DOWNLOAD_NAME}}', file.name)
+      .replace('{{ID}}', file.id);
 }
 
 function _renderAudio(file) {
@@ -212,7 +235,7 @@ function _renderVideo(file) {
 
    var videoHTML = filebrowser.filetypes.templates.video;
 
-   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', file.extraInfo.cacheLink || file.directLink);
+   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', file.directLink);
    videoHTML = videoHTML.replace('{{MIME_TYPE}}', mime);
    videoHTML = videoHTML.replace('{{SUB_TRACKS}}', subTracks.join());
 
@@ -344,7 +367,7 @@ filebrowser.filetypes._fetchPoster = function(file) {
 // templates
 
 filebrowser.filetypes.templates.general = `
-   <div class='center'>
+   <div class='center filebrowser-text-center'>
       <p>{{FULL_NAME}}</p>
       <p>Mod Time: {{MOD_TIME}}</p>
       <p>Size: {{SIZE}}</p>
@@ -357,6 +380,18 @@ filebrowser.filetypes.templates.generalIFrame = `
    <iframe src='{{RAW_URL}}'>
       Browser Not Supported
    </iframe>
+`;
+
+filebrowser.filetypes.templates.archive = `
+   <div class='center filebrowser-text-center'>
+      <p>{{FULL_NAME}}</p>
+      <p>Mod Time: {{MOD_TIME}}</p>
+      <p>Size: {{SIZE}}</p>
+      <p>Type: {{TYPE}}</p>
+      <p><a href='{{RAW_URL}}' download='{{DOWNLOAD_NAME}}'>Direct Download</a></p>
+      <br />
+      <button onclick="filebrowser.archive.extract('{{ID}}');">Extract in Browser</button>
+   </div>
 `;
 
 filebrowser.filetypes.templates.audio = `
