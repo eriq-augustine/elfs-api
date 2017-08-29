@@ -390,7 +390,7 @@ filebrowser.filetypes.templates.archive = `
       <p>Type: {{TYPE}}</p>
       <p><a href='{{RAW_URL}}' download='{{DOWNLOAD_NAME}}'>Direct Download</a></p>
       <br />
-      <button onclick="filebrowser.archive.extract('{{ID}}');">Extract in Browser</button>
+      <button class='filebrowser-button' onclick="filebrowser.archive.extract('{{ID}}');">Extract in Browser</button>
    </div>
 `;
 

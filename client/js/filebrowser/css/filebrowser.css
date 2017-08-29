@@ -37,7 +37,7 @@
    box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
 }
 
-.filebrowser-body-area button {
+.filebrowser-body-area .filebrowser-button {
    text-align: center;
    font-size: 32px;
    padding: 20px;
