@@ -14,20 +14,28 @@ filebrowser.DirEnt = function(id, name, modDate, size, isDir, parentId) {
 
 filebrowser.Dir = function(id, name, modDate, parentId) {
    filebrowser.DirEnt.call(this, id, name, modDate, 0, true, parentId);
+
+   // If this is false, then we have not fully fetched this this.
+   // This means we have seen this as a child in an ls, but have
+   // not listed this dir in turn.
+   this.fullyFetched = false;
    this.children = [];
 }
 
 filebrowser.Dir.prototype = Object.create(filebrowser.DirEnt.prototype);
 filebrowser.Dir.prototype.constructor = filebrowser.Dir;
 
-filebrowser.File = function(id, name, modDate, size, directLink, parentId, extraInfo) {
-   extraInfo = extraInfo || {};
-
+filebrowser.File = function(id, name, modDate, size, directLink, parentId) {
    filebrowser.DirEnt.call(this, id, name, modDate, size, false, parentId);
-   this.extraInfo = extraInfo;
+
    this.directLink = directLink;
    this.isExtractedArchive = false;
    this.archiveChildren = [];
+
+   this.isDataURL = false;
+   if (this.directLink && this.directLink.startsWith('data:')) {
+      this.isDataURL = true;
+   }
 
    if (name.indexOf('.') > -1) {
       var nameParts = name.match(/^(.*)\.([^\.]*)$/);

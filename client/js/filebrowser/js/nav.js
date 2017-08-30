@@ -22,22 +22,38 @@ filebrowser.nav.changeTarget = function(id, force) {
       return;
    }
 
-   var listing = filebrowser.cache.listingFromCache(id);
+   var listing = filebrowser.cache.listingFromCache(id, true);
    if (!listing) {
       filebrowser.cache.loadCache(id, filebrowser.nav.changeTarget.bind(window, id, force));
       return;
    }
 
-   if (listing.isDir) {
-      filebrowser.view.loadBrowserContent(listing, listing.children, id);
-   } else if (listing.isExtractedArchive) {
-      filebrowser.view.loadBrowserContent(listing, listing.archiveChildren, id);
+   // If this is a dir, load up the children for nav context.
+   var children = undefined;
+
+   // Both dirs and extracted archives are treated the same.
+   if (listing.isDir || listing.isExtractedArchive) {
+      var childIds = undefined;
+      if (listing.isDir) {
+         childIds = listing.children;
+      } else {
+         childIds = listing.archiveChildren;
+      }
+
+      // Fetch all the children.
+      // We are only doing shallow fetches, and they should all already be cached.
+      var children = [];
+      childIds.forEach(function(childId) {
+         children.push(filebrowser.cache.listingFromCache(childId));
+      });
+
+      filebrowser.view.loadBrowserContent(listing, children);
    } else {
-      filebrowser.view.loadViewer(listing, id);
+      filebrowser.view.loadViewer(listing);
    }
 
    // Update the current target.
-   filebrowser.nav._updateCurrentTarget(id, listing);
+   filebrowser.nav._updateCurrentTarget(listing, children);
 }
 
 filebrowser.nav.getCurrentTargetPath = function() {
@@ -45,15 +61,15 @@ filebrowser.nav.getCurrentTargetPath = function() {
 }
 
 // This is the only function allowed to modify |_currentTarget|.
-filebrowser.nav._updateCurrentTarget = function(id, listing) {
-   filebrowser.nav._currentTarget = id;
+filebrowser.nav._updateCurrentTarget = function(listing, children) {
+   filebrowser.nav._currentTarget = listing.id;
 
    // Update the history.
-   filebrowser.nav._history.push(id);
+   filebrowser.nav._history.push(listing.id);
 
    // Change the hash if necessary.
-   if (id != filebrowser.nav.cleanHashPath()) {
-      window.location.hash = filebrowser.nav.encodeForHash(id);
+   if (listing.id != filebrowser.nav.cleanHashPath()) {
+      window.location.hash = filebrowser.nav.encodeForHash(listing.id);
    }
 
    // Change the page's title.
@@ -63,20 +79,16 @@ filebrowser.nav._updateCurrentTarget = function(id, listing) {
    filebrowser.view.loadBreadcrumbs(filebrowser.nav._buildBreadcrumbs(listing));
 
    // Update any context actions.
-   filebrowser.view.loadContextActions(listing, id);
+   filebrowser.view.loadContextActions(listing, children);
 }
 
 // Go through all the parents and build up some breadcrumbs.
 filebrowser.nav._buildBreadcrumbs = function(listing) {
    var breadcrumbs = [];
 
-   while (true) {
+   // Stop at root (root it its own parent).
+   while (listing.parentId != listing.id) {
       breadcrumbs.unshift({display: listing.name, id: listing.id});
-
-      // Root it its own parent.
-      if (!listing.parentId || listing.parentId == listing.id) {
-         break;
-      }
       listing = filebrowser.cache.listingFromCache(listing.parentId);
    }
 

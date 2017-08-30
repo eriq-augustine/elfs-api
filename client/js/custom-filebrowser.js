@@ -5,9 +5,17 @@
 
 var mediaserver = mediaserver || {};
 
+mediaserver._FAKEROOT_ID = '';
+
 // Convert a backend DirEntry to a frontend DirEnt.
 mediaserver._convertBackendDirEntry = function(dirEntry, partition) {
-   var id = mediaserver.util.frontendId(dirEntry.Id, partition);;
+   var id = mediaserver.util.frontendId(dirEntry.Id, partition);
+   var parentId = mediaserver.util.frontendId(dirEntry.Parent, partition);
+
+   // If we are a partition root, then our parent id is an empty string.
+   if (id == parentId) {
+      parentId = mediaserver._FAKEROOT_ID;
+   }
 
    // In the case of a root entry (empty name), rename it to the partition's name (minus the connection type).
    var name = dirEntry.Name;
@@ -17,11 +25,9 @@ mediaserver._convertBackendDirEntry = function(dirEntry, partition) {
 
    if (dirEntry.IsFile) {
       return new filebrowser.File(id, name, new Date(dirEntry.ModTimestamp * 1000),
-            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry),
-            mediaserver.util.frontendId(dirEntry.Parent, partition));
+            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry), parentId);
    } else {
-      return new filebrowser.Dir(id, name, new Date(dirEntry.ModTimestamp * 1000),
-            mediaserver.util.frontendId(dirEntry.Parent, partition));
+      return new filebrowser.Dir(id, name, new Date(dirEntry.ModTimestamp * 1000), parentId);
    }
 }
 
@@ -75,22 +81,34 @@ mediaserver._fetch = function(id, callback) {
             return;
          }
 
-         var rtnData;
+         var dirents = [];
+         var parentId = undefined;
+
          if (data.IsDir) {
-            rtnData = mediaserver._convertBackendDirEntry(data.DirEntry, partition);
+            var dir = mediaserver._convertBackendDirEntry(data.DirEntry, partition);
 
             // Fill in the children.
             var children = [];
             data.Children.forEach(function(child) {
-               children.push(mediaserver._convertBackendDirEntry(child, partition));
+               var child = mediaserver._convertBackendDirEntry(child, partition);
+
+               children.push(child.id);
+               dirents.push(child);
             });
 
-            rtnData.children = children;
+            dir.children = children;
+            dir.fullyFetched = true;
+
+            parentId = dir.parentId;
+            dirents.push(dir);
          } else {
-            rtnData = mediaserver._convertBackendDirEntry(data.DirEntry, partition);
+            var file = mediaserver._convertBackendDirEntry(data.DirEntry, partition);
+
+            parentId = file.parentId;
+            dirents.push(file);
          }
 
-         callback(!data.IsFile, rtnData);
+         callback(dirents, parentId);
       }
    });
 }
@@ -125,20 +143,26 @@ mediaserver._fetchPartitions = function(callback) {
             return;
          }
 
+         var dirents = [];
+
          // Create a fake directory whose children are the roots of the respective partitions.
-         var fakeRoot = new filebrowser.Dir('', '/', Date.now(), '');
+         // The fake root is its own parent.
+         var fakeRoot = new filebrowser.Dir(mediaserver._FAKEROOT_ID, '/', Date.now(), mediaserver._FAKEROOT_ID);
 
          var children = [];
          data.Partitions.forEach(function(partition) {
             var id = mediaserver.util.frontendId('', partition);
             var name = mediaserver.util.partitionName(partition);
 
-            children.push(new filebrowser.Dir(id, name, Date.now(), ''));
+            children.push(id);
+            dirents.push(new filebrowser.Dir(id, name, Date.now(), mediaserver._FAKEROOT_ID));
          });
 
          fakeRoot.children = children;
+         fakeRoot.fullyFetched = true;
+         dirents.push(fakeRoot);
 
-         callback(true, fakeRoot);
+         callback(dirents, mediaserver._FAKEROOT_ID);
       }
    });
 }

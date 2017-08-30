@@ -12,6 +12,14 @@ filebrowser.archive.extract = function(id) {
       throw "Attempt to extract uncached file: [" + id + "].";
    }
 
+   if (fileInfo.isDir) {
+      throw "Attempt to extract a dir: [" + id + "].";
+   }
+
+   if (fileInfo.isDir) {
+      throw "Attempt to extract a non-zip file: [" + fileInfo.name + "].";
+   }
+
    var modal = filebrowser.archive._openModal(fileInfo);
 
    // Fetch the data as a blob.
@@ -105,6 +113,11 @@ filebrowser.archive._buildDirentsFromReader = function(reader, fileInfo, modal) 
       filebrowser.archive._connectParents(dirs, dirs, fileInfo);
       filebrowser.archive._connectParents(files, dirs, fileInfo);
 
+      // Mark all child directories as fully fetched (so we don't make requests to teh server for an ls).
+      for (path in dirs) {
+         dirs[path].fullyFetched = true;
+      }
+
       // Keep track of how many files have extracted.
       var count = 0;
 
@@ -137,13 +150,13 @@ filebrowser.archive._connectParents = function(dirents, dirs, fileInfo) {
 
          // Also connect the child on the parent's side.
          // Use the same memory.
-         dirs[parentPath].children.push(dirents[path]);
+         dirs[parentPath].children.push(dirents[path].id);
       } else {
          // Any entry without a parent gets the archive as a parent.
          dirents[path].parentId = fileInfo.id;
 
          // Stach away the root children specially.
-         fileInfo.archiveChildren.push(dirents[path]);
+         fileInfo.archiveChildren.push(dirents[path].id);
       }
    }
 }
@@ -155,6 +168,7 @@ filebrowser.archive._extractEntry = function(id, entry, files, callback) {
    // TODO(eriq): Check for error.
    entry.getData(new zip.Data64URIWriter(mime), function(dataURI) {
       files[path].directLink = dataURI;
+      files[path].isDataURL = true;
       callback(path, true);
    });
 }
@@ -162,11 +176,11 @@ filebrowser.archive._extractEntry = function(id, entry, files, callback) {
 filebrowser.archive._cacheEntries = function(fileInfo, files, dirs) {
    for (var path in dirs) {
       var dirent = dirs[path];
-      filebrowser.cache.cachePut(dirent.id, dirent);
+      filebrowser.cache.cachePut(dirent);
    }
 
    for (var path in files) {
       var dirent = files[path];
-      filebrowser.cache.cachePut(dirent.id, dirent);
+      filebrowser.cache.cachePut(dirent);
    }
 }

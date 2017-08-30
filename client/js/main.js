@@ -39,7 +39,7 @@ mediaserver._init = function() {
       target = filebrowser.nav.cleanHashPath();
    }
 
-   filebrowser.nav.changeTarget(target, 0, true);
+   filebrowser.nav.changeTarget(target, true);
 }
 
 mediaserver._setupLogin = function() {

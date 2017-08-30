@@ -260,10 +260,15 @@ filebrowser.filetypes._fetchSubs = function(file) {
    // We only support webvtt subs.
 
    var subs = [];
-   var parentDir = filebrowser.cache.listingFromCache(file.parentId);
+   var parentDir = filebrowser.cache.listingFromCache(file.parentId, true);
 
    for (var i = 0; i < parentDir.children.length; i++) {
-      var child = parentDir.children[i];
+      var child = filebrowser.cache.listingFromCache(parentDir.children[i]);
+
+      // We are only looking for files.
+      if (child.isDir) {
+         continue;
+      }
 
       // Skip this file.
       if (child.id == file.id) {
@@ -334,11 +339,16 @@ filebrowser.filetypes._fetchPoster = function(file) {
    //  - A file with the same basename as the video file, but an image extension.
    //  - An image with with the basename: 'poster'.
 
-   var parentDir = filebrowser.cache.listingFromCache(file.parentId);
+   var parentDir = filebrowser.cache.listingFromCache(file.parentId, true);
 
    var posterFile = undefined;
    for (var i = 0; i < parentDir.children.length; i++) {
-      var child = parentDir.children[i];
+      var child = filebrowser.cache.listingFromCache(parentDir.children[i]);
+
+      // We are only looking for files.
+      if (child.isDir) {
+         continue;
+      }
 
       // Skip this file.
       if (child.id == file.id) {
