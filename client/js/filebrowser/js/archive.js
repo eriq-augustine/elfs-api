@@ -3,9 +3,25 @@
 var filebrowser = filebrowser || {};
 filebrowser.archive = filebrowser.archive || {};
 
+filebrowser.archive._initComplete = false;
+filebrowser.archive._modal = null;
+
+filebrowser.archive._TAR_DIR_TYPE = '5';
+
+// Some libraries will need some initialization.
+filebrowser.archive._init = function() {
+   if (filebrowser.archive._initComplete) {
+      return;
+   }
+
+   zip.workerScriptsPath = 'js/filebrowser/vendor/zipjs/';
+
+   filebrowser.archive._initComplete = true;
+}
+
 // TODO(eriq): Put up a modal.
 filebrowser.archive.extract = function(id) {
-   zip.workerScriptsPath = 'js/filebrowser/vendor/zipjs/';
+   filebrowser.archive._init();
 
    var fileInfo = filebrowser.cache.listingFromCache(id);
    if (!fileInfo) {
@@ -16,8 +32,15 @@ filebrowser.archive.extract = function(id) {
       throw "Attempt to extract a dir: [" + id + "].";
    }
 
-   if (fileInfo.isDir) {
-      throw "Attempt to extract a non-zip file: [" + fileInfo.name + "].";
+   if (!filebrowser.filetypes.isFileClass(fileInfo, 'ex-archive')) {
+      throw "We do not know how to extract this archive type: [" + fileInfo.name + "].";
+   }
+
+   // The type of data we want to get the response as.
+   // Default to a blob.
+   var responseType = 'binary';
+   if (fileInfo.extension == 'tar') {
+      responseType = 'arraybuffer';
    }
 
    var modal = filebrowser.archive._openModal(fileInfo);
@@ -28,20 +51,25 @@ filebrowser.archive.extract = function(id) {
       type: "GET",
       dataType: 'binary',
       processData: false,
+      responseType: responseType,
       success: function(blob) {
-         zip.createReader(new zip.BlobReader(blob), function(reader) {
-            filebrowser.archive._buildDirentsFromReader(reader, fileInfo, modal);
-         }, function(error) {
-            // TODO(eriq): more
-            console.log("Error");
-            console.log(error);
-         });
+         if (fileInfo.extension == 'zip') {
+            filebrowser.archive._unzip(blob, fileInfo);
+         } else if (fileInfo.extension == 'tar') {
+            filebrowser.archive._untar(blob, fileInfo);
+         } else {
+            throw "Unknown extension for extraction: [" + fileInfo.extension + "].";
+         }
       }
    });
 }
 
 // Returns the modal.
 filebrowser.archive._openModal = function(fileInfo) {
+   if (filebrowser.archive._modal) {
+      return;
+   }
+
    var modal = new tingle.modal({
       footer: false,
       stickyFooter: false,
@@ -72,12 +100,30 @@ filebrowser.archive._openModal = function(fileInfo) {
 
    // open modal
    modal.open();
-
-   return modal;
+   filebrowser.archive._modal = modal;
 }
 
-filebrowser.archive._buildDirentsFromReader = function(reader, fileInfo, modal) {
-   // get all entries from the zip
+filebrowser.archive._closeModal = function() {
+   if (!filebrowser.archive._modal) {
+      return;
+   }
+
+   filebrowser.archive._modal.close();
+   filebrowser.archive._modal = null;
+}
+
+filebrowser.archive._unzip = function(blob, fileInfo) {
+   zip.createReader(new zip.BlobReader(blob), function(reader) {
+      filebrowser.archive._unzipFromReader(reader, fileInfo);
+   }, function(error) {
+      // TODO(eriq): more
+      console.log("Error");
+      console.log(error);
+   });
+}
+
+filebrowser.archive._unzipFromReader = function(reader, fileInfo) {
+   // Get all entries from the zip
    reader.getEntries(function(entries) {
       // Key by the dirent's path (not id) to make it easier to connect parents later.
       var files = {};
@@ -113,7 +159,7 @@ filebrowser.archive._buildDirentsFromReader = function(reader, fileInfo, modal) 
       filebrowser.archive._connectParents(dirs, dirs, fileInfo);
       filebrowser.archive._connectParents(files, dirs, fileInfo);
 
-      // Mark all child directories as fully fetched (so we don't make requests to teh server for an ls).
+      // Mark all child directories as fully fetched (so we don't make requests to the server for an ls).
       for (path in dirs) {
          dirs[path].fullyFetched = true;
       }
@@ -134,11 +180,71 @@ filebrowser.archive._buildDirentsFromReader = function(reader, fileInfo, modal) 
 
                filebrowser.archive._cacheEntries(fileInfo, files, dirs);
                filebrowser.nav.changeTarget(fileInfo.id, true);
-               modal.close();
+               filebrowser.archive._closeModal();
             }
          });
       }
    });
+}
+
+// We require the source data as an ArrayBuffer.
+filebrowser.archive._untar = function(blob, archiveFileInfo) {
+   untar(blob).then(
+      function(entries) {
+         // Key by the dirent's path (not id) to make it easier to connect parents later.
+         var files = {};
+         var dirs = {};
+         var nextId = 0;
+
+         // Make a first pass to just construct all the dirents.
+         // Don't connect parents yet.
+         for (var i = 0; i < entries.length; i++) {
+            var entry = entries[i];
+
+            var path = entry.name.replace(/\/$/, '');
+            var id = archiveFileInfo.id + '_' + filebrowser.util.zeroPad(nextId++, 6);
+            var basename = filebrowser.util.basename(path);
+            var modDate = new Date(entry.modificationTime * 1000);
+
+            if (entry.type == filebrowser.archive._TAR_DIR_TYPE) {
+               var dirInfo = new filebrowser.Dir(id, basename, modDate, undefined);
+
+               // Mark all child directories as fully fetched (so we don't make requests to the server for an ls).
+               dirInfo.fullyFetched = true;
+
+               dirs[path] = dirInfo;
+            } else {
+               var mime = filebrowser.filetypes.getMimeForExension(filebrowser.util.ext(path));
+               var rawFile = new File([entry.blob], basename, {type: mime});
+
+               var fileInfo = new filebrowser.File(id, basename, modDate, entry.size, undefined, undefined);
+
+               fileInfo.rawFile = rawFile;
+               fileInfo.directLink = URL.createObjectURL(rawFile);
+               fileInfo.isObjectURL = true;
+
+               files[path] = fileInfo;
+            }
+         }
+
+         // Mark the archive as extracted.
+         archiveFileInfo.isExtractedArchive = true;
+
+         // Connect parents and collect children.
+         filebrowser.archive._connectParents(dirs, dirs, archiveFileInfo);
+         filebrowser.archive._connectParents(files, dirs, archiveFileInfo);
+
+         // Cache the entries and redirect to the newly extracted archive.
+         filebrowser.archive._cacheEntries(archiveFileInfo, files, dirs);
+         filebrowser.nav.changeTarget(archiveFileInfo.id, true);
+         filebrowser.archive._closeModal();
+      },
+      function(err) {
+         // TODO(eriq): More
+         console.log("Failed to untar");
+         console.log(err);
+      }
+   );
 }
 
 filebrowser.archive._connectParents = function(dirents, dirs, fileInfo) {

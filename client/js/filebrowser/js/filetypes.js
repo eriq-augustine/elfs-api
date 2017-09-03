@@ -85,6 +85,7 @@ filebrowser.filetypes.extensions = filebrowser.filetypes.extensions || {
    'vb':    {fileClass: 'code', mime: 'text/plain'},
 
    // Archives we know how to open.
+   'tar':   {fileClass: 'ex-archive', mime: 'application/x-tar'},
    'zip':   {fileClass: 'ex-archive', mime: 'application/x-zip'},
 
    // Archives we do not know how to open.
@@ -93,7 +94,6 @@ filebrowser.filetypes.extensions = filebrowser.filetypes.extensions || {
    'gz':    {fileClass: 'archive', mime: 'application/x-gzip'},
    'gzip':  {fileClass: 'archive', mime: 'application/x-gzip'},
    'rar':   {fileClass: 'archive', mime: 'application/x-rar-compressed'},
-   'tar':   {fileClass: 'archive', mime: 'application/x-tar'},
    'tar.gz':{fileClass: 'archive', mime: 'application/x-gzip'},
    'tar.bz':{fileClass: 'archive', mime: 'application/x-bzip'},
    '7z':    {fileClass: 'archive', mime: 'application/x-7z-compressed'},
