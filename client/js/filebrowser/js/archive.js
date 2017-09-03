@@ -166,9 +166,12 @@ filebrowser.archive._extractEntry = function(id, entry, files, callback) {
    var mime = filebrowser.filetypes.getMimeForExension(filebrowser.util.ext(path));
 
    // TODO(eriq): Check for error.
-   entry.getData(new zip.Data64URIWriter(mime), function(dataURI) {
-      files[path].directLink = dataURI;
-      files[path].isDataURL = true;
+   entry.getData(new zip.BlobWriter(mime), function(data) {
+      var rawFile = new File([data], files[path].name, {type: mime});
+
+      files[path].rawFile = rawFile;
+      files[path].directLink = URL.createObjectURL(rawFile);
+      files[path].isObjectURL = true;
       callback(path, true);
    });
 }

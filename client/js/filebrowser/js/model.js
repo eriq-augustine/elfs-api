@@ -32,10 +32,11 @@ filebrowser.File = function(id, name, modDate, size, directLink, parentId) {
    this.isExtractedArchive = false;
    this.archiveChildren = [];
 
-   this.isDataURL = false;
-   if (this.directLink && this.directLink.startsWith('data:')) {
-      this.isDataURL = true;
-   }
+   // Fully cached files may be present.
+   // This is usually the case if we have extracted some archive.
+   // We will hold only to the file object and then create a link with URL.createObjectURL().
+   this.isObjectURL = false;
+   this.rawFile = null;
 
    if (name.indexOf('.') > -1) {
       var nameParts = name.match(/^(.*)\.([^\.]*)$/);
