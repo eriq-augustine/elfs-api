@@ -10,6 +10,12 @@ filebrowser.DirEnt = function(id, name, modDate, size, isDir, parentId) {
    this.isDir = isDir;
    this.parentId = parentId;
    this.cacheTime = null;
+
+   // Children of extracted archives cannot to some things like refresh their cache entries.
+   this.isExtractedChild = false;
+
+   // Files will also get children since they may be extracted archives.
+   this.children = [];
 }
 
 filebrowser.Dir = function(id, name, modDate, parentId) {
@@ -19,7 +25,6 @@ filebrowser.Dir = function(id, name, modDate, parentId) {
    // This means we have seen this as a child in an ls, but have
    // not listed this dir in turn.
    this.fullyFetched = false;
-   this.children = [];
 }
 
 filebrowser.Dir.prototype = Object.create(filebrowser.DirEnt.prototype);
@@ -30,7 +35,6 @@ filebrowser.File = function(id, name, modDate, size, directLink, parentId) {
 
    this.directLink = directLink;
    this.isExtractedArchive = false;
-   this.archiveChildren = [];
 
    // Fully cached files may be present.
    // This is usually the case if we have extracted some archive.

@@ -127,6 +127,38 @@ filebrowser.cache.cachePut = function(dirent, force) {
    }
 }
 
+// If |repopulate| is true, then we will issue a load for the entry.
+// Otherwise, just remove it.
+filebrowser.cache.refreshEntry = function(dirent, repopulate, callback) {
+   // Simple files are simple to refresh.
+   if (!dirent.isDir && !dirent.isExtractedArchive) {
+      delete filebrowser.cache._fileCache[dirent.id];
+      filebrowser.cache._dbCacheRemove(dirent);
+   } else {
+      // Archived files and dirs are harder to refresh.
+      // First clear all the descendents, but don't repopulate them.
+      dirent.children.forEach(function(childId) {
+         filebrowser.cache.refreshEntry(filebrowser.cache.listingFromCache(childId), false);
+      });
+
+      // Now we can clear the parent.
+      if (dirent.isDir) {
+         delete filebrowser.cache._dirCache[dirent.id];
+      } else {
+         delete filebrowser.cache._fileCache[dirent.id];
+      }
+
+      filebrowser.cache._dbCacheRemove(dirent);
+   }
+
+   // If we need to repopulate, preform a new fetch.
+   if (repopulate) {
+      filebrowser.cache.loadCache(dirent.id, callback);
+   } else if (callback) {
+      callback();
+   }
+}
+
 filebrowser.cache._dbCachePut = function(dirent) {
    if (!filebrowser.cache._db) {
       return;
@@ -143,8 +175,28 @@ filebrowser.cache._dbCachePut = function(dirent) {
    };
 }
 
+filebrowser.cache._dbCacheRemove = function(dirent) {
+   if (!filebrowser.cache._db) {
+      return;
+   }
+
+   var transaction = filebrowser.cache._db.transaction([filebrowser.cache._STORE_NAME], 'readwrite');
+   var store = transaction.objectStore(filebrowser.cache._STORE_NAME);
+   var request = store.delete(dirent.id);
+
+   // For the most part, ignore the result.
+   // Just log it and go on.
+   request.onerror = function(err) {
+      console.log("Failed to delete a dirent from the db cache.", err);
+   };
+}
+
 // Load up all dirents from the db.
 filebrowser.cache._loadCacheFromDB = function(callback) {
+   if (!filebrowser.cache._db) {
+      return;
+   }
+
    var transaction = filebrowser.cache._db.transaction([filebrowser.cache._STORE_NAME], 'readonly');
 
    var store = transaction.objectStore(filebrowser.cache._STORE_NAME);

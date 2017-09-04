@@ -264,6 +264,19 @@ filebrowser.view.loadBreadcrumbs = function(breadcrumbs) {
 filebrowser.view.loadContextActions = function(listing, children) {
    $(filebrowser.contextActionsQuery).empty();
 
+   // All non-extracted dirents get an action for clearing the cache.
+   if (!listing.isExtractedChild) {
+      var refreshCache = document.createElement('i');
+      refreshCache.className = 'fa fa-refresh';
+      refreshCache.setAttribute('data-toggle', 'tooltip');
+      refreshCache.setAttribute('title', 'refresh cache');
+      refreshCache.addEventListener('click', filebrowser.cache.refreshEntry.bind(window, listing, true, function() {
+         // On callback, force reload this page.
+         filebrowser.nav.changeTarget(listing.id, true);
+      }));
+      $(filebrowser.contextActionsQuery).append(refreshCache);
+   }
+
    if (!listing.isDir) {
       // Files gets a direct download link.
       var downloadLink = document.createElement('a');

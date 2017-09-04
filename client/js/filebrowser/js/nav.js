@@ -33,17 +33,10 @@ filebrowser.nav.changeTarget = function(id, force) {
 
    // Both dirs and extracted archives are treated the same.
    if (listing.isDir || listing.isExtractedArchive) {
-      var childIds = undefined;
-      if (listing.isDir) {
-         childIds = listing.children;
-      } else {
-         childIds = listing.archiveChildren;
-      }
-
       // Fetch all the children.
       // We are only doing shallow fetches, and they should all already be cached.
       var children = [];
-      childIds.forEach(function(childId) {
+      listing.children.forEach(function(childId) {
          children.push(filebrowser.cache.listingFromCache(childId));
       });
 

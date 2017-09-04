@@ -209,6 +209,7 @@ filebrowser.archive._buildDirent = function(entries, parentInfo) {
 
       if (entry.isDir) {
          var dirInfo = new filebrowser.Dir(id, basename, modDate, undefined);
+         dirInfo.isExtractedChild = true;
 
          // Mark all child directories as fully fetched (so we don't make requests to the server for an ls).
          dirInfo.fullyFetched = true;
@@ -219,6 +220,7 @@ filebrowser.archive._buildDirent = function(entries, parentInfo) {
          var rawFile = new File([entry.blob], basename, {type: mime});
 
          var fileInfo = new filebrowser.File(id, basename, modDate, entry.size, undefined, undefined);
+         fileInfo.isExtractedChild = true;
 
          fileInfo.rawFile = rawFile;
          fileInfo.directLink = URL.createObjectURL(rawFile);
@@ -254,7 +256,7 @@ filebrowser.archive._connectParents = function(dirents, dirs, fileInfo) {
          dirents[path].parentId = fileInfo.id;
 
          // Stach away the root children specially.
-         fileInfo.archiveChildren.push(dirents[path].id);
+         fileInfo.children.push(dirents[path].id);
       }
    }
 }
