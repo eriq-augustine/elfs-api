@@ -11,12 +11,10 @@ import (
    "encoding/base64"
    "encoding/binary"
    "encoding/json"
-   "fmt"
    "io/ioutil"
    "sync"
    "time"
 
-   driverutil "github.com/eriq-augustine/elfs/util"
    "github.com/eriq-augustine/goconfig"
    "github.com/eriq-augustine/golog"
    "golang.org/x/crypto/bcrypt"
@@ -88,40 +86,6 @@ func InvalidateToken(token string) (bool, error) {
 
    delete(apiSessions, token);
    return true, nil;
-}
-
-func CreateUser(username string, passhash string) (string, error) {
-   createAccountMutex.Lock();
-   defer createAccountMutex.Unlock();
-
-   _, exists := apiUsers[username];
-   if (exists) {
-      return "", fmt.Errorf("Username (%s) already exists", username);
-   }
-
-   bcryptHash, err := bcrypt.GenerateFromPassword([]byte(passhash), bcrypt.DefaultCost);
-   if (err != nil) {
-      golog.ErrorE("Could not generate bcrypt hash", err);
-      return "", err;
-   }
-
-   apiUsers[username] = &model.MemoryUser{
-      DiskUser: model.DiskUser{
-         Username: username,
-         Passhash: string(bcryptHash),
-         IsAdmin: false,
-         IV: driverutil.GenIV(),
-         CipherPartitionCredentials: nil,
-      },
-      PartitionCredentials: nil,
-   };
-
-   token, _:= generateToken();
-   apiSessions[token] = username;
-
-   SaveUsers();
-
-   return token, nil;
 }
 
 func SaveUsers() {

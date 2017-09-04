@@ -120,6 +120,9 @@ func addFilesystemCreds(usersFile string) {
    fmt.Print("FileSystem Connection String: ");
    connectionString := util.ReadLine(reader);
 
+   fmt.Print("FileSystem Alias (may be empty for no alias): ");
+   alias := util.ReadLine(reader);
+
    fmt.Print("FileSystem Username: ");
    fsUsername := util.ReadLine(reader);
 
@@ -129,6 +132,7 @@ func addFilesystemCreds(usersFile string) {
    apiUser.PartitionCredentials[connectionString] = model.PartitionCredential{
       Username: fsUsername,
       Weakhash: fsWeakhash,
+      PartitionAlias: alias,
       PartitionKey: nil,
       PartitionIV: nil,
    };

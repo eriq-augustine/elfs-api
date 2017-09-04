@@ -42,15 +42,6 @@ func requestToken(username string, passhash string) (interface{}, int, error) {
    }
 }
 
-func createUser(username string, passhash string) (interface{}, error) {
-   token, err := auth.CreateUser(username, passhash);
-   if (err != nil) {
-      return "", err;
-   }
-
-   return messages.NewAuthorizedToken(token), nil;
-}
-
 func loadPartitions(username goapi.UserName, hexKey string, hexIV string) (interface{}, int, error) {
    apiUser, ok := auth.GetUser(string(username));
    if (!ok) {

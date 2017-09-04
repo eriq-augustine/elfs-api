@@ -26,6 +26,7 @@ type DiskUser struct {
 type MemoryUser struct {
    DiskUser
    PartitionCredentials map[string]PartitionCredential  // Map of connection string to credential.
+   partitionAliases map[string]string  // Maps an alias to the real connectio string.
 }
 
 // Information for a user specific to a partition.
@@ -33,6 +34,7 @@ type MemoryUser struct {
 type PartitionCredential struct {
    Username string
    Weakhash string
+   PartitionAlias string
    PartitionKey []byte
    PartitionIV []byte
 }
@@ -99,13 +101,30 @@ func (this *MemoryUser) DecryptPartitionCredentials(weakhash string) error {
    }
 
    err = json.Unmarshal(cleartext, &this.PartitionCredentials);
-   return errors.WithStack(err);
+   if (err != nil) {
+      return errors.WithStack(err);
+   }
+
+   // Now include any aliases.
+   this.partitionAliases = make(map[string]string);
+   for connectionString, credentials := range(this.PartitionCredentials) {
+      if (credentials.PartitionAlias != "") {
+         this.partitionAliases[credentials.PartitionAlias] = connectionString;
+      }
+   }
+
+   return nil;
 }
 
 func (this *MemoryUser) LongString() string {
    var filesystemUsers []string = make([]string, 0, len(this.PartitionCredentials));
    for connectionString, creds := range(this.PartitionCredentials) {
-      filesystemUsers = append(filesystemUsers, fmt.Sprintf("%s::%s", creds.Username, connectionString));
+      var alias string = "";
+      if (creds.PartitionAlias != "") {
+         alias = "(" + creds.PartitionAlias + ")";
+      }
+
+      filesystemUsers = append(filesystemUsers, fmt.Sprintf("%s::%s%s", creds.Username, connectionString, alias));
    }
 
    var adminStatus string = "";
@@ -123,4 +142,17 @@ func (this *MemoryUser) String() string {
    }
 
    return fmt.Sprintf("%s %s", this.Username, adminStatus);
+}
+
+// Get partition credentials while observing aliases.
+// The second return value will be the resolved connection string
+// (ie, if it is an alias it will be converted to a true connection string).
+func (this *MemoryUser) GetPartitionCredential(connectionString string) (PartitionCredential, string, bool) {
+   newConnectionString, ok := this.partitionAliases[connectionString];
+   if (ok) {
+      connectionString = newConnectionString;
+   }
+
+   creds, ok := this.PartitionCredentials[connectionString];
+   return creds, connectionString, ok;
 }

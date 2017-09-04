@@ -40,7 +40,7 @@ func AuthenticateFilesystemUser(fsDriver *driver.Driver, apiUsername string) (us
    filesystemAuthMutex.Lock();
    defer filesystemAuthMutex.Unlock();
 
-   credentials, ok := apiUser.PartitionCredentials[fsDriver.ConnectionString()];
+   credentials, _, ok := apiUser.GetPartitionCredential(fsDriver.ConnectionString());
    if (!ok) {
       return user.EMPTY_ID, errors.New("User does not have credentials for this filesystem.");
    }

@@ -32,11 +32,10 @@ mediaserver.util.addTokenParam = function(link) {
    return link + '?' + $.param(params);
 }
 
-mediaserver.util.getContentsPath = function(dirent) {
+mediaserver.util.getContentsPath = function(dirent, partition) {
    var params = {
       "token": mediaserver.apiToken,
-      // TODO(eriq): get actual partition.
-      "partition": 'local:/home/eriq/code/elfs/testtime',
+      "partition": partition,
       "id": dirent.Id
    };
 
@@ -58,8 +57,18 @@ mediaserver.util.backendId = function(frontendId) {
    return parts;
 }
 
+// Make a nice name for a partition.
+// If it looks like a partition identidier (with a
+// connection type and name), then just return the name,
+// If it looks like an alise (no delimter), then just return that.
 mediaserver.util.partitionName = function(partition) {
    var parts = partition.split(mediaserver.util._BACKEND_PARTITION_DELIM);
+
+   // Alias.
+   if (parts.length == 1) {
+      return partition;
+   }
+
    if (parts.length != 2) {
       console.log("Malformed partition: [" + partition + "]");
       throw "Malformed partition: [" + partition + "]";

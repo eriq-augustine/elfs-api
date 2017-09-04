@@ -38,7 +38,7 @@ func GetDriver(apiUser *model.MemoryUser, connectionString string) (*driver.Driv
    // we need to ensure that this user has proper permissions for this partition
    // (not even on the filesystem level, but on the API level).
    // We will do this be ensuring that the user has access to this partition's key.
-   key, iv, err := getCredentials(apiUser, connectionString);
+   key, iv, connectionString, err := getCredentials(apiUser, connectionString);
    if (err != nil) {
       return nil, user.EMPTY_ID, errors.WithStack(err);
    }
@@ -106,21 +106,21 @@ func CloseDrivers() {
    drivers = make(map[string]*driver.Driver);
 }
 
-// Returns: Key, IV, error.
-func getCredentials(apiUser *model.MemoryUser, connectionString string) ([]byte, []byte, error) {
+// Returns: Key, IV, resolved connection string, error.
+func getCredentials(apiUser *model.MemoryUser, connectionString string) ([]byte, []byte, string, error) {
    // First check if the user has private credentials for this partition.
-   credentials, ok := apiUser.PartitionCredentials[connectionString];
+   credentials, newConnectionString, ok := apiUser.GetPartitionCredential(connectionString);
    if (ok && credentials.PartitionKey != nil) {
-      return credentials.PartitionKey, credentials.PartitionIV, nil;
+      return credentials.PartitionKey, credentials.PartitionIV, newConnectionString, nil;
    }
 
    // Now check to see if this is a public partition.
-   key, iv, ok := GetPublicCredentials(connectionString);
+   key, iv, newConnectionString, ok := GetPublicCredentials(connectionString);
    if (ok) {
-      return key, iv, nil;
+      return key, iv, newConnectionString, nil;
    }
 
-   return nil, nil, errors.Errorf("Could not location credentials for [%s]. Maybe public parititions have not been loaded.", connectionString);
+   return nil, nil, "", errors.Errorf("Could not location credentials for [%s]. Maybe public parititions have not been loaded.", connectionString);
 }
 
 // Get connection strings for all the partitions this user has access to.

@@ -17,23 +17,34 @@ import (
 
 // {connectionString: credentials}
 var publicPartitions map[string]PartitionCredentials;
+// {alias: connectionString}
+var partitionAliases map[string]string;
 
 var publicPartitionsMutex *sync.Mutex;
 
 type PartitionCredentials struct {
    Key []byte
    IV []byte
+   Alias string
 }
 
 func init() {
    publicPartitions = make(map[string]PartitionCredentials);
+   partitionAliases = make(map[string]string);
    publicPartitionsMutex = &sync.Mutex{};
 }
 
-// Returns: Key, IV, ok.
-func GetPublicCredentials(connectionString string) ([]byte, []byte, bool) {
+// Returns: Key, IV, real connection string, ok.
+// The third return value will be the resolved connection string
+// (ie, if it is an alias it will be converted to a true connection string).
+func GetPublicCredentials(connectionString string) ([]byte, []byte, string, bool) {
+   newConnectionString, ok := partitionAliases[connectionString];
+   if (ok) {
+      connectionString = newConnectionString;
+   }
+
    creds, ok := publicPartitions[connectionString];
-   return creds.Key, creds.IV, ok;
+   return creds.Key, creds.IV, connectionString, ok;
 }
 
 // Key and IV are hex encoded strings.
@@ -51,6 +62,15 @@ func LoadPublicPartitions(hexKey string, hexIV string) error {
    }
 
    publicPartitions = partitions;
+
+   // Load the aliases.
+   partitionAliases = make(map[string]string);
+   for connectionString, credentials := range(publicPartitions) {
+      if (credentials.Alias != "") {
+         partitionAliases[credentials.Alias] = connectionString;
+      }
+   }
+
    return nil;
 }
 

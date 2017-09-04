@@ -25,7 +25,7 @@ mediaserver._convertBackendDirEntry = function(dirEntry, partition) {
 
    if (dirEntry.IsFile) {
       return new filebrowser.File(id, name, new Date(dirEntry.ModTimestamp * 1000),
-            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry), parentId);
+            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry, partition), parentId);
    } else {
       return new filebrowser.Dir(id, name, new Date(dirEntry.ModTimestamp * 1000), parentId);
    }

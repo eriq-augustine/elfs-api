@@ -54,7 +54,12 @@ func showListing(path string) {
 
    fmt.Printf("Partition Count: %d\n", len(partitions));
    for connectionString, credentials := range(partitions) {
-      fmt.Printf("   %s - [%s, %s]\n", connectionString, hex.EncodeToString(credentials.Key), hex.EncodeToString(credentials.IV));
+      var alias string = "";
+      if (credentials.Alias != "") {
+         alias = " (" + credentials.Alias + ")";
+      }
+
+      fmt.Printf("   %s%s - [%s, %s]\n", connectionString, alias, hex.EncodeToString(credentials.Key), hex.EncodeToString(credentials.IV));
    }
 }
 
@@ -76,6 +81,9 @@ func add(path string) {
    fmt.Print("Connection String: ");
    connectionString := util.ReadLine(reader);
 
+   fmt.Print("Alias (may be empty for no alias): ");
+   alias := util.ReadLine(reader);
+
    entryHexKey, entryHexIV := getCredentials();
 
    entryKey, err := hex.DecodeString(entryHexKey);
@@ -93,6 +101,7 @@ func add(path string) {
    partitions[connectionString] = fsdriver.PartitionCredentials{
       Key: entryKey,
       IV: entryIV,
+      Alias: alias,
    };
 
    err = fsdriver.SavePublicPartitionsFile(partitions, path, hexKey, hexIV);
