@@ -30,16 +30,16 @@ mediaserver._init = function() {
    $('.content').empty().append(mediaserver._contentTemplate);
 
    // Init the file browser.
-   filebrowser.init('mediaserver-filebrowser', mediaserver._fetch, {});
+   filebrowser.init('mediaserver-filebrowser', mediaserver._fetch, {}, function() {
+      // If there is a valid hash path, follow it.
+      // Otherwise, set up a new hash at root.
+      var target = '';
+      if (window.location.hash) {
+         target = filebrowser.nav.cleanHashPath();
+      }
 
-   // If there is a valid hash path, follow it.
-   // Otherwise, set up a new hash at root.
-   var target = '';
-   if (window.location.hash) {
-      target = filebrowser.nav.cleanHashPath();
-   }
-
-   filebrowser.nav.changeTarget(target, true);
+      filebrowser.nav.changeTarget(target, true);
+   });
 }
 
 mediaserver._setupLogin = function() {

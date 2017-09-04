@@ -259,7 +259,10 @@ filebrowser.archive._connectParents = function(dirents, dirs, fileInfo) {
    }
 }
 
-filebrowser.archive._cacheEntries = function(fileInfo, files, dirs) {
+filebrowser.archive._cacheEntries = function(parentInfo, files, dirs) {
+   // Force a cache update if the parent (since it has been extracted).
+   filebrowser.cache.cachePut(parentInfo, true);
+
    for (var path in dirs) {
       var dirent = dirs[path];
       filebrowser.cache.cachePut(dirent);

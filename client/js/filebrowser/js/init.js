@@ -25,7 +25,9 @@ filebrowser.initFields._containerTemplate = `
       }
    }
 */
-filebrowser.init = function(containerId, fetchFunction, options) {
+// Init is an async operation.
+// Pass a callback to be notified when it is ready.
+filebrowser.init = function(containerId, fetchFunction, options, callback) {
    options = options || {};
 
    filebrowser.customFetch = fetchFunction;
@@ -42,6 +44,13 @@ filebrowser.init = function(containerId, fetchFunction, options) {
    filebrowser.initFields._parseOptions(options);
    filebrowser.initFields._initHTML(options);
    filebrowser.initFields._initTablesorter();
+
+   // Initialing the cache is an async operation.
+   filebrowser.cache._init(function() {
+      if (callback) {
+         callback();
+      }
+   });
 }
 
 filebrowser.initFields._initHTML = function() {
