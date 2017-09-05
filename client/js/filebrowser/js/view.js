@@ -146,7 +146,18 @@ function _loadGalleryView(listing, children) {
       autoplay: false,
       clicknext: true,
       preload: 10,
+      showInfo: false,
       transitionSpeed: 100,
+      extend: function() {
+         var gallery = this; // "this" is the gallery instance
+
+         //fullscreen button
+         this.addElement('fscr');
+         this.appendChild('stage','fscr');
+         var fscr = this.$('fscr').click(function() {
+               gallery.toggleFullscreen();
+         });
+      },
    });
 
    // Make sure that there are images here.
