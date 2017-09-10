@@ -170,7 +170,7 @@ filebrowser.filetypes.getMimeForExension = function(ext) {
 
 function _renderGeneralIFrame(file) {
    return filebrowser.filetypes.templates.generalIFrame
-      .replace('{{RAW_URL}}', file.directLink);
+      .replace('{{RAW_URL}}', filebrowser.getDirectLink(file));
 }
 
 function _renderGeneral(file) {
@@ -179,7 +179,7 @@ function _renderGeneral(file) {
       .replace('{{MOD_TIME}}', filebrowser.util.formatDate(file.modDate))
       .replace('{{SIZE}}', filebrowser.util.bytesToHuman(file.size))
       .replace('{{TYPE}}', filebrowser.filetypes.getFileClass(file) || 'unknown')
-      .replace('{{RAW_URL}}', file.directLink)
+      .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{DOWNLOAD_NAME}}', file.name);
 }
 
@@ -189,20 +189,20 @@ function _renderArchive(file) {
       .replace('{{MOD_TIME}}', filebrowser.util.formatDate(file.modDate))
       .replace('{{SIZE}}', filebrowser.util.bytesToHuman(file.size))
       .replace('{{TYPE}}', filebrowser.filetypes.getFileClass(file) || 'unknown')
-      .replace('{{RAW_URL}}', file.directLink)
+      .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{DOWNLOAD_NAME}}', file.name)
       .replace('{{ID}}', file.id);
 }
 
 function _renderAudio(file) {
    return filebrowser.filetypes.templates.audio
-      .replace('{{RAW_URL}}', file.directLink)
+      .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{MIME}}', filebrowser.filetypes.extensions[file.extension].mime);
 }
 
 function _renderImage(file) {
    return filebrowser.filetypes.templates.image
-      .replace('{{RAW_URL}}', file.directLink)
+      .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{BASE_NAME}}', file.basename)
       .replace('{{BASE_NAME}}', file.basename);
 }
@@ -235,7 +235,7 @@ function _renderVideo(file) {
 
    var videoHTML = filebrowser.filetypes.templates.video;
 
-   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', file.directLink);
+   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', filebrowser.getDirectLink(file));
    videoHTML = videoHTML.replace('{{MIME_TYPE}}', mime);
    videoHTML = videoHTML.replace('{{SUB_TRACKS}}', subTracks.join());
 
@@ -308,7 +308,7 @@ filebrowser.filetypes._fetchSubs = function(file) {
       subs.push({
          lang: lang,
          subId: subId,
-         link: child.directLink,
+         link: filebrowser.getDirectLink(child),
       });
    }
 
@@ -371,7 +371,7 @@ filebrowser.filetypes._fetchPoster = function(file) {
       return '';
    }
 
-   return posterFile.directLink;
+   return filebrowser.getDirectLink(posterFile);
 }
 
 // templates

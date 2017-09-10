@@ -7,8 +7,10 @@ import (
    "strings"
    "sync"
 
+   "github.com/eriq-augustine/elfs/connector"
    "github.com/eriq-augustine/elfs/driver"
    "github.com/eriq-augustine/elfs/user"
+   "github.com/eriq-augustine/goconfig"
    "github.com/pkg/errors"
 
    "github.com/eriq-augustine/elfs-api/auth"
@@ -17,6 +19,13 @@ import (
 
 const (
    CONNECTION_STRING_DELIM = ":"
+
+   AWS_CRED_KEY = "awsCredentialsPath"
+   AWS_CRED_DEFAULT = "~/.aws/credentials"
+   AWS_PROFILE_KEY = "awsProfile"
+   AWS_PROFILE_DEFAULT = "default"
+   AWS_REGION_KEY = "awsRegion"
+   AWS_REGION_DEFAULT = "us-west-1"
 )
 
 // {connectionString: driver}.
@@ -76,7 +85,7 @@ func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.
       return nil, errors.Errorf("Bad connection string: [%s]", connectionString);
    }
 
-   if (parts[0] == driver.DRIVER_TYPE_LOCAL) {
+   if (parts[0] == connector.CONNECTOR_TYPE_LOCAL) {
       if (!filepath.IsAbs(parts[1])) {
          return nil, errors.New("Local connection string path must be absolute.");
       }
@@ -85,8 +94,15 @@ func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.
       if (err != nil) {
          return nil, errors.WithStack(err);
       }
-   } else if (parts[0] == driver.DRIVER_TYPE_S3) {
-      return nil, errors.New("S3 driver not yet supported.");
+   } else if (parts[0] == connector.CONNECTOR_TYPE_S3) {
+      var awsCredentialsPath string = goconfig.GetStringDefault(AWS_CRED_KEY, AWS_CRED_DEFAULT);
+      var awsProfile string = goconfig.GetStringDefault(AWS_PROFILE_KEY, AWS_PROFILE_DEFAULT);
+      var awsRegion string = goconfig.GetStringDefault(AWS_REGION_KEY, AWS_REGION_DEFAULT);
+
+      rtn, err = driver.NewS3Driver(key, iv, parts[1], awsCredentialsPath, awsProfile, awsRegion);
+      if (err != nil) {
+         return nil, errors.WithStack(err);
+      }
    } else {
       return nil, errors.Errorf("Unknown driver type: [%s]", parts[0]);
    }

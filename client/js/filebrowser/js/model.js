@@ -30,11 +30,11 @@ filebrowser.Dir = function(id, name, modDate, parentId) {
 filebrowser.Dir.prototype = Object.create(filebrowser.DirEnt.prototype);
 filebrowser.Dir.prototype.constructor = filebrowser.Dir;
 
-filebrowser.File = function(id, name, modDate, size, directLink, parentId) {
+filebrowser.File = function(id, name, modDate, size, parentId) {
    filebrowser.DirEnt.call(this, id, name, modDate, size, false, parentId);
 
-   this.directLink = directLink;
    this.isExtractedArchive = false;
+   this.directLink = null;
 
    // Fully cached files may be present.
    // This is usually the case if we have extracted some archive.
@@ -54,3 +54,19 @@ filebrowser.File = function(id, name, modDate, size, directLink, parentId) {
 
 filebrowser.File.prototype = Object.create(filebrowser.DirEnt.prototype);
 filebrowser.File.prototype.constructor = filebrowser.File;
+
+filebrowser.getDirectLink = function(dirent) {
+   if (!dirent) {
+      return '';
+   }
+
+   if (dirent.directLink) {
+      return dirent.directLink;
+   }
+
+   if (filebrowser.prepareDirectLink) {
+      return filebrowser.prepareDirectLink(dirent);
+   }
+
+   return '';
+}

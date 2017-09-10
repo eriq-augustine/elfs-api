@@ -32,11 +32,11 @@ mediaserver.util.addTokenParam = function(link) {
    return link + '?' + $.param(params);
 }
 
-mediaserver.util.getContentsPath = function(dirent, partition) {
+mediaserver.util.getContentsPath = function(backendId, partition) {
    var params = {
       "token": mediaserver.apiToken,
       "partition": partition,
-      "id": dirent.Id
+      "id": backendId
    };
 
    return mediaserver.apiContentsPath + '?' + $.param(params);

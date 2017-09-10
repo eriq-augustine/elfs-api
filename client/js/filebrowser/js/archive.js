@@ -46,7 +46,7 @@ filebrowser.archive.extract = function(id) {
 
    // Fetch the data as a blob.
    $.ajax({
-      url: fileInfo.directLink,
+      url: filebrowser.getDirectLink(fileInfo),
       type: "GET",
       dataType: 'binary',
       processData: false,

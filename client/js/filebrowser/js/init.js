@@ -27,10 +27,15 @@ filebrowser.initFields._containerTemplate = `
 */
 // Init is an async operation.
 // Pass a callback to be notified when it is ready.
-filebrowser.init = function(containerId, fetchFunction, options, callback) {
+// |fetchFunction| should look like: function(direntId, function(direntsFetched, parentIdOfDirents)).
+// |directLinkFunction| gets a direct link (file contents) of a file (filebrowser.File),
+//  It should look like: function(file).
+//  If a file does not already have a directLink field populated, then this function will be called.
+filebrowser.init = function(containerId, fetchFunction, directLinkFunction, options, callback) {
    options = options || {};
 
    filebrowser.customFetch = fetchFunction;
+   filebrowser.prepareDirectLink = directLinkFunction;
 
    filebrowser.containerId = containerId;
    filebrowser.tableId = containerId + '-tablesorter';

@@ -171,7 +171,7 @@ function _loadGalleryView(listing, children) {
       hasImage = true;
 
       data.push({
-         image: child.directLink,
+         image: filebrowser.getDirectLink(child),
          title: child.name,
       });
    });
@@ -291,7 +291,7 @@ filebrowser.view.loadContextActions = function(listing, children) {
    if (!listing.isDir) {
       // Files gets a direct download link.
       var downloadLink = document.createElement('a');
-      downloadLink.setAttribute('href', listing.directLink);
+      downloadLink.setAttribute('href', filebrowser.getDirectLink(listing));
       downloadLink.setAttribute('download', listing.name);
 
       var downloadIcon = document.createElement('i');

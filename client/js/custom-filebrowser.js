@@ -7,6 +7,16 @@ var mediaserver = mediaserver || {};
 
 mediaserver._FAKEROOT_ID = '';
 
+// Figure out the id and partition and add on the token.
+mediaserver._prepareDirectLink = function(dirent) {
+   if (dirent.isDir) {
+      return "#";
+   }
+
+   var [partition, backendId] = mediaserver.util.backendId(dirent.id);
+   return mediaserver.util.getContentsPath(backendId, partition);
+}
+
 // Convert a backend DirEntry to a frontend DirEnt.
 mediaserver._convertBackendDirEntry = function(dirEntry, partition) {
    var id = mediaserver.util.frontendId(dirEntry.Id, partition);
@@ -25,7 +35,7 @@ mediaserver._convertBackendDirEntry = function(dirEntry, partition) {
 
    if (dirEntry.IsFile) {
       return new filebrowser.File(id, name, new Date(dirEntry.ModTimestamp * 1000),
-            dirEntry.Size, mediaserver.util.getContentsPath(dirEntry, partition), parentId);
+            dirEntry.Size, parentId);
    } else {
       return new filebrowser.Dir(id, name, new Date(dirEntry.ModTimestamp * 1000), parentId);
    }
