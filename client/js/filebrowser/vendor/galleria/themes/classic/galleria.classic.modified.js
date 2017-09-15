@@ -16,7 +16,8 @@ Galleria.addTheme({
     name: 'classic',
     version: 1.5,
     author: 'Galleria',
-    css: 'galleria.classic.css',
+    // ERIQ: css: 'galleria.classic.css',
+    css: 'filebrowser.css',
     defaults: {
         transition: 'slide',
         thumbCrop:  'height',

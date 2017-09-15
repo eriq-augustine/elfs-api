@@ -1,0 +1,1906 @@
+/**
+ * Galleria Classic Theme 2017-02-13
+ * http://galleria.io
+ *
+ * Copyright (c) 2010 - 2017 worse is better UG
+ * Licensed under the MIT license
+ * https://raw.github.com/worseisbetter/galleria/master/LICENSE
+ *
+ */
+
+#galleria-loader{height:1px!important}
+
+.galleria-theme-classic {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+}
+.galleria-theme-classic img {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+.galleria-theme-classic .galleria-stage {
+    position: absolute;
+    top: 10px;
+    bottom: 60px;
+    left: 10px;
+    right: 10px;
+    overflow:hidden;
+}
+.galleria-theme-classic .galleria-thumbnails-container {
+    height: 50px;
+    bottom: 0;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    z-index: 2;
+}
+.galleria-theme-classic .galleria-carousel .galleria-thumbnails-list {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+.galleria-theme-classic .galleria-thumbnails .galleria-image {
+    height: 40px;
+    width: 60px;
+    background: #000;
+    margin: 0 5px 0 0;
+    border: 1px solid #000;
+    float: left;
+    cursor: pointer;
+}
+.galleria-theme-classic .galleria-counter {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    text-align: right;
+    color: #fff;
+    font: normal 11px/1 arial,sans-serif;
+    z-index: 1;
+}
+.galleria-theme-classic .galleria-loader {
+    background: #000;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    display: none;
+    background: url(classic-loader.gif) no-repeat 2px 2px;
+}
+.galleria-theme-classic .galleria-info {
+    width: 50%;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+    position: absolute;
+}
+.galleria-theme-classic .galleria-info-text {
+    background-color: #000;
+    padding: 12px;
+    display: none;
+    /* IE7 */ zoom:1;
+}
+.galleria-theme-classic .galleria-info-title {
+    font: bold 12px/1.1 arial,sans-serif;
+    margin: 0;
+    color: #fff;
+    margin-bottom: 7px;
+}
+.galleria-theme-classic .galleria-info-description {
+    font: italic 12px/1.4 georgia,serif;
+    margin: 0;
+    color: #bbb;
+}
+.galleria-theme-classic .galleria-info-close {
+    width: 9px;
+    height: 9px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-position: -753px -11px;
+    opacity: .5;
+    filter: alpha(opacity=50);
+    cursor: pointer;
+    display: none;
+}
+.galleria-theme-classic .notouch .galleria-info-close:hover{
+    opacity:1;
+    filter: alpha(opacity=100);
+}
+.galleria-theme-classic .touch .galleria-info-close:active{
+    opacity:1;
+    filter: alpha(opacity=100);
+}
+.galleria-theme-classic .galleria-info-link {
+    background-position: -669px -5px;
+    opacity: .7;
+    filter: alpha(opacity=70);
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-color: #000;
+}
+.galleria-theme-classic.notouch .galleria-info-link:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+.galleria-theme-classic.touch .galleria-info-link:active {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+.galleria-theme-classic .galleria-image-nav {
+    position: absolute;
+    top: 50%;
+    margin-top: -62px;
+    width: 100%;
+    height: 62px;
+    left: 0;
+}
+.galleria-theme-classic .galleria-image-nav-left,
+.galleria-theme-classic .galleria-image-nav-right {
+    opacity: .3;
+    filter: alpha(opacity=30);
+    cursor: pointer;
+    width: 62px;
+    height: 124px;
+    position: absolute;
+    left: 10px;
+    z-index: 2;
+    background-position: 0 46px;
+}
+.galleria-theme-classic .galleria-image-nav-right {
+    left: auto;
+    right: 10px;
+    background-position: -254px 46px;
+    z-index: 2;
+}
+.galleria-theme-classic.notouch .galleria-image-nav-left:hover,
+.galleria-theme-classic.notouch .galleria-image-nav-right:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+.galleria-theme-classic.touch .galleria-image-nav-left:active,
+.galleria-theme-classic.touch .galleria-image-nav-right:active {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+.galleria-theme-classic .galleria-thumb-nav-left,
+.galleria-theme-classic .galleria-thumb-nav-right {
+    cursor: pointer;
+    display: none;
+    background-position: -495px 5px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 40px;
+    width: 23px;
+    z-index: 3;
+    opacity: .8;
+    filter: alpha(opacity=80);
+}
+.galleria-theme-classic .galleria-thumb-nav-right {
+    background-position: -578px 5px;
+    border-right: none;
+    right: 0;
+    left: auto;
+}
+.galleria-theme-classic .galleria-thumbnails-container .disabled {
+    opacity: .2;
+    filter: alpha(opacity=20);
+    cursor: default;
+}
+.galleria-theme-classic.notouch .galleria-thumb-nav-left:hover,
+.galleria-theme-classic.notouch .galleria-thumb-nav-right:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    background-color: #111;
+}
+.galleria-theme-classic.touch .galleria-thumb-nav-left:active,
+.galleria-theme-classic.touch .galleria-thumb-nav-right:active {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    background-color: #111;
+}
+.galleria-theme-classic.notouch .galleria-thumbnails-container .disabled:hover {
+    opacity: .2;
+    filter: alpha(opacity=20);
+    background-color: transparent;
+}
+
+.galleria-theme-classic .galleria-carousel .galleria-thumb-nav-left,
+.galleria-theme-classic .galleria-carousel .galleria-thumb-nav-right {
+    display: block;
+}
+.galleria-theme-classic .galleria-thumb-nav-left,
+.galleria-theme-classic .galleria-thumb-nav-right,
+.galleria-theme-classic .galleria-info-link,
+.galleria-theme-classic .galleria-info-close,
+.galleria-theme-classic .galleria-image-nav-left,
+.galleria-theme-classic .galleria-image-nav-right {
+    background-image: url(classic-map.png);
+    background-repeat: no-repeat;
+}
+.galleria-theme-classic.galleria-container.videoplay .galleria-info,
+.galleria-theme-classic.galleria-container.videoplay .galleria-counter{ display:none!important; }
+
+.video-js .vjs-big-play-button:before, .video-js .vjs-control:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center; }
+
+@font-face {
+  font-family: VideoJS;
+  src: url('../font/1.3.0/VideoJS.eot?') format('eot'); }
+
+@font-face {
+  font-family: VideoJS;
+  src: url(data:application/font-woff;charset=utf-8;base64,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) format('woff'), url(data:application/x-font-ttf;charset=utf-8;base64,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) format('truetype');
+  font-weight: normal;
+  font-style: normal; }
+
+.vjs-icon-play, .video-js .vjs-big-play-button, .video-js .vjs-play-control {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-play:before, .video-js .vjs-big-play-button:before, .video-js .vjs-play-control:before {
+    content: '\f101'; }
+
+.vjs-icon-play-circle {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-play-circle:before {
+    content: '\f102'; }
+
+.vjs-icon-pause, .video-js .vjs-play-control.vjs-playing {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-pause:before, .video-js .vjs-play-control.vjs-playing:before {
+    content: '\f103'; }
+
+.vjs-icon-volume-mute, .video-js .vjs-mute-control.vjs-vol-0, .video-js .vjs-volume-menu-button.vjs-vol-0 {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-volume-mute:before, .video-js .vjs-mute-control.vjs-vol-0:before, .video-js .vjs-volume-menu-button.vjs-vol-0:before {
+    content: '\f104'; }
+
+.vjs-icon-volume-low, .video-js .vjs-mute-control.vjs-vol-1, .video-js .vjs-volume-menu-button.vjs-vol-1 {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-volume-low:before, .video-js .vjs-mute-control.vjs-vol-1:before, .video-js .vjs-volume-menu-button.vjs-vol-1:before {
+    content: '\f105'; }
+
+.vjs-icon-volume-mid, .video-js .vjs-mute-control.vjs-vol-2, .video-js .vjs-volume-menu-button.vjs-vol-2 {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-volume-mid:before, .video-js .vjs-mute-control.vjs-vol-2:before, .video-js .vjs-volume-menu-button.vjs-vol-2:before {
+    content: '\f106'; }
+
+.vjs-icon-volume-high, .video-js .vjs-mute-control, .video-js .vjs-volume-menu-button {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-volume-high:before, .video-js .vjs-mute-control:before, .video-js .vjs-volume-menu-button:before {
+    content: '\f107'; }
+
+.vjs-icon-fullscreen-enter, .video-js .vjs-fullscreen-control {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-fullscreen-enter:before, .video-js .vjs-fullscreen-control:before {
+    content: '\f108'; }
+
+.vjs-icon-fullscreen-exit, .video-js.vjs-fullscreen .vjs-fullscreen-control {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-fullscreen-exit:before, .video-js.vjs-fullscreen .vjs-fullscreen-control:before {
+    content: '\f109'; }
+
+.vjs-icon-square {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-square:before {
+    content: '\f10a'; }
+
+.vjs-icon-spinner {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-spinner:before {
+    content: '\f10b'; }
+
+.vjs-icon-subtitles, .video-js .vjs-subtitles-button {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-subtitles:before, .video-js .vjs-subtitles-button:before {
+    content: '\f10c'; }
+
+.vjs-icon-captions, .video-js .vjs-captions-button {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-captions:before, .video-js .vjs-captions-button:before {
+    content: '\f10d'; }
+
+.vjs-icon-chapters, .video-js .vjs-chapters-button {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-chapters:before, .video-js .vjs-chapters-button:before {
+    content: '\f10e'; }
+
+.vjs-icon-share {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-share:before {
+    content: '\f10f'; }
+
+.vjs-icon-cog {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-cog:before {
+    content: '\f110'; }
+
+.vjs-icon-circle, .video-js .vjs-mouse-display, .video-js .vjs-play-progress, .video-js .vjs-volume-level {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-circle:before, .video-js .vjs-mouse-display:before, .video-js .vjs-play-progress:before, .video-js .vjs-volume-level:before {
+    content: '\f111'; }
+
+.vjs-icon-circle-outline {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-circle-outline:before {
+    content: '\f112'; }
+
+.vjs-icon-circle-inner-circle {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-circle-inner-circle:before {
+    content: '\f113'; }
+
+.vjs-icon-audio-description {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal; }
+  .vjs-icon-audio-description:before {
+    content: '\f114'; }
+
+.video-js {
+  /* display:inline-block would be closer to the video el's display:inline
+   * but it results in flash reloading when going into fullscreen [#2205]
+   */
+  display: block;
+  /* Make video.js videos align top when next to video elements */
+  vertical-align: top;
+  box-sizing: border-box;
+  color: #fff;
+  background-color: #000;
+  position: relative;
+  padding: 0;
+  /* Start with 10px for base font size so other dimensions can be em based and
+  easily calculable. */
+  font-size: 10px;
+  line-height: 1;
+  /* Provide some basic defaults for fonts */
+  font-weight: normal;
+  font-style: normal;
+  /* Avoiding helvetica: issue #376 */
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Fix for Firefox 9 fullscreen (only if it is enabled). Not needed when
+  checking fullScreenEnabled. */ }
+  .video-js:-moz-full-screen {
+    position: absolute; }
+  .video-js:-webkit-full-screen {
+    width: 100% !important;
+    height: 100% !important; }
+
+/* All elements inherit border-box sizing */
+.video-js *, .video-js *:before, .video-js *:after {
+  box-sizing: inherit; }
+
+/* List style reset */
+.video-js ul {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  list-style-position: outside;
+  /* Important to specify each */
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0; }
+
+/* Fill the width of the containing element and use padding to create the
+   desired aspect ratio. Default to 16x9 unless another ratio is given. */
+/* Not including a default AR in vjs-fluid because it would override
+   the user set AR injected into the header. */
+.video-js.vjs-fluid, .video-js.vjs-16-9, .video-js.vjs-4-3 {
+  width: 100%;
+  max-width: 100%;
+  height: 0; }
+
+.video-js.vjs-16-9 {
+  padding-top: 56.25%; }
+
+.video-js.vjs-4-3 {
+  padding-top: 75%; }
+
+.video-js.vjs-fill {
+  width: 100%;
+  height: 100%; }
+
+/* Playback technology elements expand to the width/height of the containing div
+<video> or <object> */
+.video-js .vjs-tech {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+
+/* Fullscreen Styles */
+body.vjs-full-window {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  /* Fix for IE6 full-window. http://www.cssplay.co.uk/layouts/fixed.html */
+  overflow-y: auto; }
+
+.vjs-full-window .video-js.vjs-fullscreen {
+  position: fixed;
+  overflow: hidden;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0; }
+
+.video-js.vjs-fullscreen {
+  width: 100% !important;
+  height: 100% !important;
+  /* Undo any aspect ratio padding for fluid layouts */
+  padding-top: 0 !important; }
+
+.video-js.vjs-fullscreen.vjs-user-inactive {
+  cursor: none; }
+
+/* Hide disabled or unsupported controls. */
+.vjs-hidden {
+  display: none !important; }
+
+.vjs-lock-showing {
+  display: block !important;
+  opacity: 1;
+  visibility: visible; }
+
+/*  In IE8 w/ no JavaScript (no HTML5 shim), the video tag doesn't register.
+The .video-js classname on the video tag also isn't considered.
+This optional paragraph inside the video tag can provide a message to users
+about what's required to play video. */
+.vjs-no-js {
+  padding: 20px;
+  color: #fff;
+  background-color: #000;
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  width: 300px;
+  height: 150px;
+  margin: 0px auto; }
+
+.vjs-no-js a, .vjs-no-js a:visited {
+  color: #66A8CC; }
+
+.video-js .vjs-big-play-button {
+  font-size: 3em;
+  line-height: 1.5em;
+  height: 1.5em;
+  width: 3em;
+  display: block;
+  z-index: 2;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 0;
+  cursor: pointer;
+  opacity: 1;
+  border: 0.06666em solid #fff;
+  /* Need a slightly gray bg so it can be seen on black backgrounds */
+  background-color: #2B333F;
+  background-color: rgba(43, 51, 63, 0.7);
+  -webkit-border-radius: 0.3em;
+  -moz-border-radius: 0.3em;
+  border-radius: 0.3em;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  transition: all 0.4s; }
+
+.vjs-big-play-centered .vjs-big-play-button {
+  top: 50%;
+  left: 50%;
+  margin-top: -0.75em;
+  margin-left: -1.5em; }
+
+.video-js:hover .vjs-big-play-button, .video-js .vjs-big-play-button:focus {
+  outline: 0;
+  border-color: #fff;
+  background-color: #73859f;
+  background-color: rgba(115, 133, 159, 0.5);
+  -webkit-transition: all 0s;
+  -moz-transition: all 0s;
+  -o-transition: all 0s;
+  transition: all 0s; }
+
+.vjs-controls-disabled .vjs-big-play-button, .vjs-has-started .vjs-big-play-button, .vjs-using-native-controls .vjs-big-play-button, .vjs-error .vjs-big-play-button {
+  display: none; }
+
+.video-js button {
+  background: none;
+  border: none;
+  color: inherit;
+  display: inline-block;
+  overflow: visible;
+  font-size: inherit;
+  line-height: inherit;
+  text-transform: none;
+  text-decoration: none;
+  transition: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none; }
+
+.vjs-menu-button {
+  cursor: pointer; }
+
+.vjs-menu .vjs-menu-content {
+  display: block;
+  padding: 0;
+  margin: 0;
+  overflow: auto; }
+
+/* prevent menus from opening while scrubbing (FF, IE) */
+.vjs-scrubbing .vjs-menu-button:hover .vjs-menu {
+  display: none; }
+
+.vjs-menu li {
+  list-style: none;
+  margin: 0;
+  padding: 0.2em 0;
+  line-height: 1.4em;
+  font-size: 1.2em;
+  text-align: center;
+  text-transform: lowercase; }
+
+.vjs-menu li:focus, .vjs-menu li:hover {
+  outline: 0;
+  background-color: #73859f;
+  background-color: rgba(115, 133, 159, 0.5); }
+
+.vjs-menu li.vjs-selected, .vjs-menu li.vjs-selected:focus, .vjs-menu li.vjs-selected:hover {
+  background-color: #fff;
+  color: #2B333F; }
+
+.vjs-menu li.vjs-menu-title {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1em;
+  line-height: 2em;
+  padding: 0;
+  margin: 0 0 0.3em 0;
+  font-weight: bold;
+  cursor: default; }
+
+.vjs-menu-button-popup .vjs-menu {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  width: 10em;
+  left: -3em;
+  /* (Width of vjs-menu - width of button) / 2 */
+  height: 0em;
+  margin-bottom: 1.5em;
+  border-top-color: rgba(43, 51, 63, 0.7);
+  /* Same as ul background */ }
+
+/* Button Pop-up Menu */
+.vjs-menu-button-popup .vjs-menu ul {
+  background-color: #2B333F;
+  background-color: rgba(43, 51, 63, 0.7);
+  position: absolute;
+  width: 100%;
+  bottom: 1.5em;
+  /* Same bottom as vjs-menu border-top */
+  max-height: 15em; }
+
+.vjs-menu-button-popup:hover .vjs-menu, .vjs-menu-button-popup .vjs-menu.vjs-lock-showing {
+  display: block; }
+
+.video-js .vjs-menu-button-inline {
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  transition: all 0.4s;
+  overflow: hidden; }
+
+.video-js .vjs-menu-button-inline:before {
+  width: 2.222222222em; }
+
+.video-js .vjs-menu-button-inline:hover, .video-js .vjs-menu-button-inline:focus, .video-js .vjs-menu-button-inline.vjs-slider-active, .video-js.vjs-no-flex .vjs-menu-button-inline {
+  width: 12em; }
+
+.video-js .vjs-menu-button-inline.vjs-slider-active {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none; }
+
+.vjs-menu-button-inline .vjs-menu {
+  opacity: 0;
+  height: 100%;
+  width: auto;
+  position: absolute;
+  left: 2.2222222em;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  transition: all 0.4s; }
+
+.vjs-menu-button-inline:hover .vjs-menu, .vjs-menu-button-inline:focus .vjs-menu, .vjs-menu-button-inline.vjs-slider-active .vjs-menu {
+  display: block;
+  opacity: 1; }
+
+.vjs-no-flex .vjs-menu-button-inline .vjs-menu {
+  display: block;
+  opacity: 1;
+  position: relative;
+  width: auto; }
+
+.vjs-no-flex .vjs-menu-button-inline:hover .vjs-menu, .vjs-no-flex .vjs-menu-button-inline:focus .vjs-menu, .vjs-no-flex .vjs-menu-button-inline.vjs-slider-active .vjs-menu {
+  width: auto; }
+
+.vjs-menu-button-inline .vjs-menu-content {
+  width: auto;
+  height: 100%;
+  margin: 0;
+  overflow: hidden; }
+
+.video-js .vjs-control-bar {
+  display: none;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3em;
+  background-color: #2B333F;
+  background-color: rgba(43, 51, 63, 0.7); }
+
+.vjs-has-started .vjs-control-bar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  visibility: visible;
+  opacity: 1;
+  -webkit-transition: visibility 0.1s, opacity 0.1s;
+  -moz-transition: visibility 0.1s, opacity 0.1s;
+  -o-transition: visibility 0.1s, opacity 0.1s;
+  transition: visibility 0.1s, opacity 0.1s; }
+
+.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: visibility 1s, opacity 1s;
+  -moz-transition: visibility 1s, opacity 1s;
+  -o-transition: visibility 1s, opacity 1s;
+  transition: visibility 1s, opacity 1s; }
+
+.vjs-controls-disabled .vjs-control-bar, .vjs-using-native-controls .vjs-control-bar, .vjs-error .vjs-control-bar {
+  /* !important is ok in this context. */
+  display: none !important; }
+
+.vjs-audio.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+  opacity: 1;
+  visibility: visible; }
+
+/* IE8 is flakey with fonts, and you have to change the actual content to force
+fonts to show/hide properly.
+- "\9" IE8 hack didn't work for this
+- Found in XP IE8 from http://modern.ie. Does not show up in "IE8 mode" in IE9
+*/
+@media \0screen {
+  .vjs-user-inactive.vjs-playing .vjs-control-bar :before {
+    content: ""; } }
+
+/* IE 8 + 9 Support */
+.vjs-has-started.vjs-no-flex .vjs-control-bar {
+  display: table; }
+
+.video-js .vjs-control {
+  outline: none;
+  position: relative;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 4em;
+  -webkit-box-flex: none;
+  -moz-box-flex: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none; }
+  .video-js .vjs-control:before {
+    font-size: 1.8em;
+    line-height: 1.67; }
+
+/* Replacement for focus outline */
+.video-js .vjs-control:focus:before, .video-js .vjs-control:hover:before, .video-js .vjs-control:focus {
+  text-shadow: 0em 0em 1em white; }
+
+/* Hide control text visually, but have it available for screenreaders */
+.video-js .vjs-control-text {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
+
+/* IE 8 + 9 Support */
+.vjs-no-flex .vjs-control {
+  display: table-cell;
+  vertical-align: middle; }
+
+.video-js .vjs-custom-control-spacer {
+  display: none; }
+
+/**
+ * Let's talk pixel math!
+ * Start with a base font size of 10px (assuming that hasn't changed)
+ * No Hover:
+ * - Progress holder is 3px
+ * - Progress handle is 9px
+ * - Progress handle is pulled up 3px to center it.
+ *
+ * Hover:
+ * - Progress holder becomes 5px
+ * - Progress handle becomes 15px
+ * - Progress handle is pulled up 5px to center it
+ */
+.video-js .vjs-progress-control {
+  -webkit-box-flex: auto;
+  -moz-box-flex: auto;
+  -webkit-flex: auto;
+  -ms-flex: auto;
+  flex: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
+.vjs-live .vjs-progress-control {
+  display: none; }
+
+/* Box containing play and load progresses. Also acts as seek scrubber. */
+.video-js .vjs-progress-holder {
+  -webkit-box-flex: auto;
+  -moz-box-flex: auto;
+  -webkit-flex: auto;
+  -ms-flex: auto;
+  flex: auto;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  height: 0.3em; }
+
+/* We need an increased hit area on hover */
+.video-js .vjs-progress-control:hover .vjs-progress-holder {
+  font-size: 1.6666666667em; }
+
+/* Also show the current time tooltip */
+.video-js .vjs-progress-control:hover .vjs-mouse-display:after, .video-js .vjs-progress-control:hover .vjs-play-progress:after {
+  display: block;
+  /* If we let the font size grow as much as everything else, the current time tooltip ends up
+     ginormous. If you'd like to enable the current time tooltip all the time, this should be disabled
+     to avoid a weird hitch when you roll off the hover. */
+  font-size: 0.6em; }
+
+/* Progress Bars */
+.video-js .vjs-progress-holder .vjs-play-progress, .video-js .vjs-progress-holder .vjs-load-progress, .video-js .vjs-progress-holder .vjs-load-progress div {
+  position: absolute;
+  display: block;
+  height: 0.3em;
+  margin: 0;
+  padding: 0;
+  /* updated by javascript during playback */
+  width: 0;
+  /* Needed for IE6 */
+  left: 0;
+  top: 0; }
+
+.video-js .vjs-mouse-display:before {
+  display: none; }
+
+.video-js .vjs-play-progress {
+  background-color: #fff; }
+  .video-js .vjs-play-progress:before {
+    position: absolute;
+    top: -0.3333333333em;
+    right: -0.5em;
+    font-size: 0.9em; }
+
+.video-js .vjs-mouse-display:after, .video-js .vjs-play-progress:after {
+  /* By default this is hidden and only shown when hovering over the progress control */
+  display: none;
+  position: absolute;
+  top: -2.4em;
+  right: -1.5em;
+  font-size: 0.9em;
+  color: #000;
+  content: attr(data-current-time);
+  padding: 0.2em 0.5em;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8);
+  -webkit-border-radius: 0.3em;
+  -moz-border-radius: 0.3em;
+  border-radius: 0.3em; }
+
+.video-js .vjs-play-progress:before, .video-js .vjs-play-progress:after {
+  z-index: 1; }
+
+.video-js .vjs-load-progress {
+  /* For IE8 we'll lighten the color */
+  background: ligthen(#73859f, 25%);
+  /* Otherwise we'll rely on stacked opacities */
+  background: rgba(115, 133, 159, 0.5); }
+
+/* there are child elements of the load progress bar that represent the
+specific time ranges that have been buffered */
+.video-js .vjs-load-progress div {
+  /* For IE8 we'll lighten the color */
+  background: ligthen(#73859f, 50%);
+  /* Otherwise we'll rely on stacked opacities */
+  background: rgba(115, 133, 159, 0.75); }
+
+.video-js.vjs-no-flex .vjs-progress-control {
+  width: auto; }
+
+.video-js .vjs-progress-control .vjs-mouse-display {
+  display: none;
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background-color: #000;
+  z-index: 1; }
+
+.vjs-no-flex .vjs-progress-control .vjs-mouse-display {
+  z-index: 0; }
+
+.video-js .vjs-progress-control:hover .vjs-mouse-display {
+  display: block; }
+
+.video-js.vjs-user-inactive .vjs-progress-control .vjs-mouse-display, .video-js.vjs-user-inactive .vjs-progress-control .vjs-mouse-display:after {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: visibility 1s, opacity 1s;
+  -moz-transition: visibility 1s, opacity 1s;
+  -o-transition: visibility 1s, opacity 1s;
+  transition: visibility 1s, opacity 1s; }
+
+.video-js.vjs-user-inactive.vjs-no-flex .vjs-progress-control .vjs-mouse-display, .video-js.vjs-user-inactive.vjs-no-flex .vjs-progress-control .vjs-mouse-display:after {
+  display: none; }
+
+.video-js .vjs-progress-control .vjs-mouse-display:after {
+  color: #fff;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.8); }
+
+.video-js .vjs-slider {
+  outline: 0;
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 0.45em 0 0.45em;
+  background-color: #73859f;
+  background-color: rgba(115, 133, 159, 0.5); }
+
+.video-js .vjs-slider:focus {
+  text-shadow: 0em 0em 1em white;
+  -webkit-box-shadow: 0 0 1em #fff;
+  -moz-box-shadow: 0 0 1em #fff;
+  box-shadow: 0 0 1em #fff; }
+
+.video-js .vjs-mute-control, .video-js .vjs-volume-menu-button {
+  cursor: pointer;
+  -webkit-box-flex: none;
+  -moz-box-flex: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none; }
+
+.video-js .vjs-volume-control {
+  width: 5em;
+  -webkit-box-flex: none;
+  -moz-box-flex: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
+.video-js .vjs-volume-bar {
+  margin: 1.35em; }
+
+.vjs-volume-bar.vjs-slider-horizontal {
+  width: 5em;
+  height: 0.3em; }
+
+.vjs-volume-bar.vjs-slider-vertical {
+  width: 0.3em;
+  height: 5em; }
+
+.video-js .vjs-volume-level {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #fff; }
+  .video-js .vjs-volume-level:before {
+    position: absolute;
+    font-size: 0.9em; }
+
+.vjs-slider-vertical .vjs-volume-level {
+  width: 0.3em; }
+  .vjs-slider-vertical .vjs-volume-level:before {
+    top: -0.5em;
+    left: -0.3em; }
+
+.vjs-slider-horizontal .vjs-volume-level {
+  height: 0.3em; }
+  .vjs-slider-horizontal .vjs-volume-level:before {
+    top: -0.3em;
+    right: -0.5em; }
+
+/* Assumes volume starts at 1.0. */
+.vjs-volume-bar.vjs-slider-vertical .vjs-volume-level {
+  height: 100%; }
+
+.vjs-volume-bar.vjs-slider-horizontal .vjs-volume-level {
+  width: 100%; }
+
+/* The volume menu button is like menu buttons (captions/subtitles) but works
+a little differently. It needs to be possible to tab to the volume slider
+without hitting space bar on the menu button. To do this we're not using
+display:none to hide the slider menu by default, and instead setting the
+width and height to zero. */
+.vjs-menu-button-popup.vjs-volume-menu-button .vjs-menu {
+  display: block;
+  width: 0;
+  height: 0;
+  border-top-color: transparent; }
+
+.vjs-menu-button-popup.vjs-volume-menu-button-vertical .vjs-menu {
+  left: 0.5em; }
+
+.vjs-menu-button-popup.vjs-volume-menu-button-horizontal .vjs-menu {
+  left: -2em; }
+
+.vjs-menu-button-popup.vjs-volume-menu-button .vjs-menu-content {
+  height: 0;
+  width: 0;
+  overflow-x: hidden;
+  overflow-y: hidden; }
+
+.vjs-volume-menu-button-vertical:hover .vjs-menu-content, .vjs-volume-menu-button-vertical .vjs-lock-showing .vjs-menu-content {
+  height: 8em;
+  width: 2.9em; }
+
+.vjs-volume-menu-button-horizontal:hover .vjs-menu-content, .vjs-volume-menu-button-horizontal .vjs-lock-showing .vjs-menu-content {
+  height: 2.9em;
+  width: 8em; }
+
+.vjs-volume-menu-button.vjs-menu-button-inline .vjs-menu-content {
+  /* An inline volume should never have a menu background color.
+     This protects it from external changes to background colors. */
+  background-color: transparent !important; }
+
+.vjs-poster {
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%; }
+
+/* Used for IE8 fallback */
+.vjs-poster img {
+  display: block;
+  vertical-align: middle;
+  margin: 0 auto;
+  max-height: 100%;
+  padding: 0;
+  width: 100%; }
+
+/* Hide the poster after the video has started playing */
+.vjs-has-started .vjs-poster {
+  display: none; }
+
+/* Don't hide the poster if we're playing audio */
+.vjs-audio.vjs-has-started .vjs-poster {
+  display: block; }
+
+/* Hide the poster when controls are disabled because it's clickable
+and the native poster can take over */
+.vjs-controls-disabled .vjs-poster {
+  display: none; }
+
+/* Hide the poster when native controls are used otherwise it covers them */
+.vjs-using-native-controls .vjs-poster {
+  display: none; }
+
+.video-js .vjs-live-control {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: flex-start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  -webkit-box-flex: auto;
+  -moz-box-flex: auto;
+  -webkit-flex: auto;
+  -ms-flex: auto;
+  flex: auto;
+  font-size: 1em;
+  line-height: 3em; }
+
+.vjs-no-flex .vjs-live-control {
+  display: table-cell;
+  width: auto;
+  text-align: left; }
+
+.video-js .vjs-time-control {
+  -webkit-box-flex: none;
+  -moz-box-flex: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  font-size: 1em;
+  line-height: 3em; }
+
+.vjs-live .vjs-time-control {
+  display: none; }
+
+/* We need the extra specificity that referencing .vjs-no-flex provides. */
+.video-js .vjs-current-time, .vjs-no-flex .vjs-current-time {
+  display: none; }
+
+.video-js .vjs-duration, .vjs-no-flex .vjs-duration {
+  display: none; }
+
+.vjs-time-divider {
+  display: none;
+  line-height: 3em; }
+
+.vjs-live .vjs-time-divider {
+  display: none; }
+
+.video-js .vjs-play-control {
+  cursor: pointer;
+  -webkit-box-flex: none;
+  -moz-box-flex: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none; }
+
+.vjs-text-track-display {
+  position: absolute;
+  bottom: 3em;
+  left: 0;
+  right: 0;
+  top: 0;
+  pointer-events: none; }
+
+/* Move captions down when controls aren't being shown */
+.video-js.vjs-user-inactive.vjs-playing .vjs-text-track-display {
+  bottom: 1em; }
+
+/* Individual tracks */
+.video-js .vjs-text-track {
+  font-size: 1.4em;
+  text-align: center;
+  margin-bottom: 0.1em;
+  /* Transparent black background, or fallback to all black (oldIE) */
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.5); }
+
+.vjs-subtitles {
+  color: #fff;
+  /* Subtitles are white */ }
+
+.vjs-captions {
+  color: #fc6;
+  /* Captions are yellow */ }
+
+.vjs-tt-cue {
+  display: block; }
+
+.video-js .vjs-fullscreen-control {
+  width: 3.8em;
+  cursor: pointer;
+  -webkit-box-flex: none;
+  -moz-box-flex: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none; }
+
+/* Switch to the exit icon when the player is in fullscreen */
+.vjs-playback-rate .vjs-playback-rate-value {
+  font-size: 1.5em;
+  line-height: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center; }
+
+.vjs-playback-rate .vjs-menu {
+  width: 4em;
+  left: 0em; }
+
+.vjs-error-display {
+  display: none; }
+
+.vjs-error .vjs-error-display {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%; }
+
+.vjs-error .vjs-error-display:before {
+  content: 'X';
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 4em;
+  color: #fff;
+  /* In order to center the play icon vertically we need to set the line height
+  to the same as the button height */
+  line-height: 1;
+  text-shadow: 0.05em 0.05em 0.1em #000;
+  text-align: center;
+  /* Needed for IE8 */
+  vertical-align: middle;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -0.5em;
+  width: 100%; }
+
+.vjs-error-display div {
+  position: absolute;
+  bottom: 1em;
+  right: 0;
+  left: 0;
+  font-size: 1.4em;
+  text-align: center;
+  padding: 3px;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.5); }
+
+.vjs-error-display a, .vjs-error-display a:visited {
+  color: #66A8CC; }
+
+.vjs-loading-spinner {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -25px 0 0 -25px;
+  opacity: 0.85;
+  /* Need to fix centered page layouts */
+  text-align: left;
+  border: 6px solid rgba(43, 51, 63, 0.7);
+  box-sizing: border-box;
+  background-clip: padding-box;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px; }
+
+.vjs-seeking .vjs-loading-spinner, .vjs-waiting .vjs-loading-spinner {
+  display: block; }
+
+.vjs-loading-spinner:before, .vjs-loading-spinner:after {
+  content: "";
+  position: absolute;
+  margin: -6px;
+  box-sizing: inherit;
+  width: inherit;
+  height: inherit;
+  border-radius: inherit;
+  /* Keep 100% opacity so they don't show through each other */
+  opacity: 1;
+  border: inherit;
+  border-color: transparent;
+  border-top-color: white; }
+
+/* only animate when showing because it can be processor heavy */
+.vjs-seeking .vjs-loading-spinner:before, .vjs-seeking .vjs-loading-spinner:after, .vjs-waiting .vjs-loading-spinner:before, .vjs-waiting .vjs-loading-spinner:after {
+  -webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
+  animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite; }
+
+.vjs-seeking .vjs-loading-spinner:before, .vjs-waiting .vjs-loading-spinner:before {
+  border-top-color: white; }
+
+.vjs-seeking .vjs-loading-spinner:after, .vjs-waiting .vjs-loading-spinner:after {
+  border-top-color: white;
+  -webkit-animation-delay: 0.44s;
+  animation-delay: 0.44s; }
+
+@keyframes vjs-spinner-spin {
+  100% {
+    transform: rotate(360deg); } }
+
+@-webkit-keyframes vjs-spinner-spin {
+  100% {
+    -webkit-transform: rotate(360deg); } }
+
+@keyframes vjs-spinner-fade {
+  0% {
+    border-top-color: #73859f; }
+
+  20% {
+    border-top-color: #73859f; }
+
+  35% {
+    border-top-color: white; }
+
+  60% {
+    border-top-color: #73859f; }
+
+  100% {
+    border-top-color: #73859f; } }
+
+@-webkit-keyframes vjs-spinner-fade {
+  0% {
+    border-top-color: #73859f; }
+
+  20% {
+    border-top-color: #73859f; }
+
+  35% {
+    border-top-color: white; }
+
+  60% {
+    border-top-color: #73859f; }
+
+  100% {
+    border-top-color: #73859f; } }
+
+.vjs-chapters-button .vjs-menu {
+  left: -10em;
+  /* (Width of vjs-menu - width of vjs-control) / 2 */
+  width: 0; }
+
+.vjs-chapters-button .vjs-menu ul {
+  width: 24em; }
+
+.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-custom-control-spacer {
+  -webkit-box-flex: auto;
+  -moz-box-flex: auto;
+  -webkit-flex: auto;
+  -ms-flex: auto;
+  flex: auto; }
+.video-js.vjs-layout-tiny:not(.vjs-fullscreen).vjs-no-flex .vjs-custom-control-spacer {
+  width: auto; }
+.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-current-time, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-captions-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-time-divider, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-progress-control, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-duration, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-remaining-time, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-playback-rate, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-mute-control, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-volume-control, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-chapters-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-captions-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-subtitles-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-volume-menu-button {
+  display: none; }
+
+.video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-current-time, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-captions-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-time-divider, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-duration, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-remaining-time, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-playback-rate, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-captions-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-mute-control, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-volume-control, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-chapters-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-subtitles-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-volume-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-fullscreen-control {
+  display: none; }
+
+.video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-current-time, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-captions-button, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-time-divider, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-duration, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-remaining-time, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-playback-rate, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-mute-control, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-volume-control, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-chapters-button, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-subtitles-button {
+  display: none; }
+
+.vjs-caption-settings {
+  position: relative;
+  top: 1em;
+  background-color: #2B333F;
+  background-color: rgba(43, 51, 63, 0.75);
+  color: #fff;
+  margin: 0 auto;
+  padding: 0.5em;
+  height: 15em;
+  font-size: 12px;
+  width: 40em; }
+
+.vjs-caption-settings .vjs-tracksettings {
+  top: 0;
+  bottom: 2em;
+  left: 0;
+  right: 0;
+  position: absolute;
+  overflow: auto; }
+
+.vjs-caption-settings .vjs-tracksettings-colors, .vjs-caption-settings .vjs-tracksettings-font {
+  float: left; }
+
+.vjs-caption-settings .vjs-tracksettings-colors:after, .vjs-caption-settings .vjs-tracksettings-font:after, .vjs-caption-settings .vjs-tracksettings-controls:after {
+  clear: both; }
+
+.vjs-caption-settings .vjs-tracksettings-controls {
+  position: absolute;
+  bottom: 1em;
+  right: 1em; }
+
+.vjs-caption-settings .vjs-tracksetting {
+  margin: 5px;
+  padding: 3px;
+  min-height: 40px; }
+
+.vjs-caption-settings .vjs-tracksetting label {
+  display: block;
+  width: 100px;
+  margin-bottom: 5px; }
+
+.vjs-caption-settings .vjs-tracksetting span {
+  display: inline;
+  margin-left: 5px; }
+
+.vjs-caption-settings .vjs-tracksetting > div {
+  margin-bottom: 5px;
+  min-height: 20px; }
+
+.vjs-caption-settings .vjs-tracksetting > div:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  min-height: 0; }
+
+.vjs-caption-settings label > input {
+  margin-right: 10px; }
+
+.vjs-caption-settings input[type="button"] {
+  width: 40px;
+  height: 40px; }
+
+.tingle-modal *{box-sizing:border-box}.tingle-modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1000;display:-webkit-box;display:-ms-flexbox;display:flex;visibility:hidden;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;overflow:hidden;background:rgba(0,0,0,.8);opacity:0;cursor:pointer;-webkit-transition:-webkit-transform .2s ease;transition:-webkit-transform .2s ease;transition:transform .2s ease;transition:transform .2s ease,-webkit-transform .2s ease}.tingle-modal--noClose .tingle-modal__close,.tingle-modal__closeLabel{display:none}.tingle-modal--confirm .tingle-modal-box{text-align:center}.tingle-modal--noOverlayClose{cursor:default}.tingle-modal__close{position:fixed;top:10px;right:28px;z-index:1000;padding:0;width:5rem;height:5rem;border:none;background-color:transparent;color:#f0f0f0;font-size:6rem;font-family:monospace;line-height:1;cursor:pointer;-webkit-transition:color .3s ease;transition:color .3s ease}.tingle-modal__close:hover{color:#fff}.tingle-modal-box{position:relative;-ms-flex-negative:0;flex-shrink:0;margin-top:auto;margin-bottom:auto;width:60%;border-radius:4px;background:#fff;opacity:1;cursor:auto;-webkit-transition:-webkit-transform .3s cubic-bezier(.175,.885,.32,1.275);transition:-webkit-transform .3s cubic-bezier(.175,.885,.32,1.275);transition:transform .3s cubic-bezier(.175,.885,.32,1.275);transition:transform .3s cubic-bezier(.175,.885,.32,1.275),-webkit-transform .3s cubic-bezier(.175,.885,.32,1.275);-webkit-transform:scale(.8);-ms-transform:scale(.8);transform:scale(.8)}.tingle-modal-box__content{padding:3rem}.tingle-modal-box__footer{padding:1.5rem 2rem;width:auto;border-bottom-right-radius:4px;border-bottom-left-radius:4px;background-color:#f5f5f5;cursor:auto}.tingle-modal-box__footer::after{display:table;clear:both;content:""}.tingle-modal-box__footer--sticky{position:fixed;bottom:-200px;z-index:10001;opacity:1;-webkit-transition:bottom .3s ease-in-out .3s;transition:bottom .3s ease-in-out .3s}.tingle-enabled{overflow:hidden;height:100%}.tingle-modal--visible .tingle-modal-box__footer{bottom:0}.tingle-enabled .tingle-content-wrapper{-webkit-filter:blur(15px);filter:blur(15px)}.tingle-modal--visible{visibility:visible;opacity:1}.tingle-modal--visible .tingle-modal-box{-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1)}.tingle-modal--overflow{overflow-y:scroll;padding-top:8vh}.tingle-btn{display:inline-block;margin:0 .5rem;padding:1rem 2rem;border:none;background-color:grey;box-shadow:none;color:#fff;vertical-align:middle;text-decoration:none;font-size:inherit;font-family:inherit;line-height:normal;cursor:pointer;-webkit-transition:background-color .4s ease;transition:background-color .4s ease}.tingle-btn--primary{background-color:#3498db}.tingle-btn--danger{background-color:#e74c3c}.tingle-btn--default{background-color:#34495e}.tingle-btn--pull-left{float:left}.tingle-btn--pull-right{float:right}@media (max-width :540px){.tingle-modal-box{width:auto;border-radius:0}.tingle-modal{top:60px;display:block;width:100%}.tingle-modal--noClose{top:0}.tingle-modal--overflow{padding:0}.tingle-modal-box__footer .tingle-btn{display:block;float:none;margin-bottom:1rem;width:100%}.tingle-modal__close{top:0;right:0;left:0;display:block;width:100%;height:60px;border:none;background-color:#2c3e50;box-shadow:none;color:#fff;line-height:55px}.tingle-modal__closeLabel{display:inline-block;vertical-align:middle;font-size:1.5rem;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",sans-serif}.tingle-modal__closeIcon{display:inline-block;margin-right:.5rem;vertical-align:middle;font-size:4rem}}
+
+/**
+ * https://github.com/CiaccoDavide/shotteh22-loading
+ */
+
+/* Required HTML:
+<div class="boxes-loader">
+   <div class="boxes-loader-square" id="boxes-loader-square-0"></div>
+   <div class="boxes-loader-square" id="boxes-loader-square-1"></div>
+   <div class="boxes-loader-square" id="boxes-loader-square-2"></div>
+   <div class="boxes-loader-square" id="boxes-loader-square-3"></div>
+   <div class="boxes-loader-square" id="boxes-loader-square-4"></div>
+   <div class="boxes-loader-square" id="boxes-loader-square-5"></div>
+   <div class="boxes-loader-square" id="boxes-loader-square-6"></div>
+</div>
+*/
+
+.boxes-loader * {
+   margin:0;
+   padding:0;
+}
+
+.boxes-loader{
+   position: absolute;
+   width: 60vw;
+   height: 60vw;
+   left: 50%;
+   top: 50%;
+   margin-top: -30vw;
+   margin-left: -30vw;
+
+   /*
+   background: #fff;
+   border-radius: 6px;
+   box-shadow: 0 0 6px -2px #666;*/
+   transform: rotate(45deg);
+}
+
+@media (orientation:landscape){
+   .boxes-loader{
+      width: 60vh;
+      height: 60vh;
+      left: 50%;
+      top: 50%;
+      margin-top: -30vh;
+      margin-left: -30vh;
+   }
+}
+
+.boxes-loader-square{
+   position: fixed;
+   width: 30%;
+   height: 30%;
+   background-color: #69f;
+   border-radius: 3px;
+   left: 70px;
+   top: 5px;
+            
+   background: linear-gradient(45deg,#3edb8d, #2caa6b, #1e8ec0, #973b5e, #7533a8, #6338ba);
+   background-size: 1000% 1000%;
+
+   animation: colorGradientFade 16s ease infinite;
+}
+@keyframes colorGradientFade {
+   
+   0%{background-position:0% 50%}
+   50%{background-position:100% 50%}
+   100%{background-position:0% 50%}
+      /*0%{background:#3edb8d;}
+   16%{background:#2caa6b;}
+   32%{background:#1e8ec0;}
+   48%{background:#973b5e;}
+   64%{background:#7533a8;}
+   80%{background:#6338ba;}
+   96%{background:#3edb8d;}*/
+}
+
+#boxes-loader-square-0{
+   left: 5px;
+   top: 5px;
+   animation:boxes-loader-square-0 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-0{
+         0%{left:2.5%;top: 2.5%;}
+      7.142%{left:2.5%;top: 2.5%;}
+      8.928%{left: 35%;top: 2.5%;}
+   19.642%{left:35%;top: 2.5%;}
+   21.428%{left:67.5%;top: 2.5%;}
+   32.142%{left:67.5%;top: 2.5%;}
+   33.928%{left:67.5%;top:35%;}
+   44.642%{left:67.5%;top:35%;}
+   46.428%{left:35%;top:35%;}
+   57.142%{left:35%;top:35%;}
+   58.928%{left:35%;top:67.5%;}
+   69.642%{left:35%;top:67.5%;}
+   71.428%{left:2.5%;top:67.5%;}
+   82.142%{left:2.5%;top:67.5%;}
+   83.928%{left:2.5%;top:35%;}
+   94.642%{left:2.5%;top:35%;}
+   96.428%{left:2.5%;top: 2.5%;}
+   100%{left:2.5%;top: 2.5%;}
+}
+
+#boxes-loader-square-1{
+   left: 70px;
+   top: 5px;
+   animation:boxes-loader-square-1 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-1{
+         0%{left:35%;top: 2.5%;}
+      5.357%{left:35%;top: 2.5%;}
+      7.142%{left:67.5%;top: 2.5%;}
+   17.857%{left:67.5%;top: 2.5%;}
+   19.642%{left:67.5%;top:35%;}
+   30.357%{left:67.5%;top:35%;}
+   32.142%{left:35%;top:35%;}
+   42.857%{left:35%;top:35%;}
+   44.642%{left:35%;top:67.5%;}
+   55.357%{left:35%;top:67.5%;}
+   57.142%{left:2.5%;top:67.5%;}
+   67.857%{left:2.5%;top:67.5%;}
+   69.642%{left:2.5%;top:35%;}
+   80.357%{left:2.5%;top:35%;}
+   82.142%{left:2.5%;top: 2.5%;}
+   92.857%{left:2.5%;top: 2.5%;}
+   94.642%{left:35%;top: 2.5%;}
+   100%{left:35%;top: 2.5%;}
+}
+
+#boxes-loader-square-2{
+   left: 67.5%;
+   top: 5px;
+   animation:boxes-loader-square-2 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-2{
+         0%{left:67.5%;top: 2.5%;}
+      3.571%{left:67.5%;top: 2.5%;}
+      5.357%{left:67.5%;top:35%;}
+   16.071%{left:67.5%;top:35%;}
+   17.857%{left:35%;top:35%;}
+   28.571%{left:35%;top:35%;}
+   30.357%{left:35%;top:67.5%;}
+   41.071%{left:35%;top:67.5%;}
+   42.857%{left:2.5%;top:67.5%;}
+   53.571%{left:2.5%;top:67.5%;}
+   55.357%{left:2.5%;top:35%;}
+   66.071%{left:2.5%;top:35%;}
+   67.857%{left:2.5%;top: 2.5%;}
+   78.571%{left:2.5%;top: 2.5%;}
+   80.357%{left:35%;top: 2.5%;}
+   91.071%{left:35%;top: 2.5%;}
+   92.857%{left:67.5%;top: 2.5%;}
+   100%{left:67.5%;top: 2.5%;}
+}
+
+#boxes-loader-square-3{
+   left: 5px;
+   top: 70px;
+   animation:boxes-loader-square-3 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-3{
+         0%{left:2.5%;top:35%;}
+      8.928%{left:2.5%;top:35%;}
+   10.714%{left:2.5%;top: 2.5%;}
+   21.428%{left:2.5%;top: 2.5%;}
+   23.214%{left:35%;top: 2.5%;}
+   33.928%{left:35%;top: 2.5%;}
+   35.714%{left:67.5%;top: 2.5%;}
+   46.428%{left:67.5%;top: 2.5%;}
+   48.214%{left:67.5%;top:35%;}
+   58.928%{left:67.5%;top:35%;}
+   60.714%{left:35%;top:35%;}
+   71.428%{left:35%;top:35%;}
+   73.214%{left:35%;top:67.5%;}
+   83.928%{left:35%;top:67.5%;}
+   85.714%{left:2.5%;top:67.5%;}
+   96.428%{left:2.5%;top:67.5%;}
+   98.214%{left:2.5%;top:35%;}
+   100%{left:2.5%;top:35%;}
+}
+
+#boxes-loader-square-4{
+   left: 70px;
+   top: 70px;
+   animation:boxes-loader-square-4 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-4{
+         0%{left:35%;top:35%;}
+      1.785%{left:35%;top:67.5%;}
+   12.499%{left:35%;top:67.5%;}
+   14.285%{left:2.5%;top:67.5%;}
+   24.999%{left:2.5%;top:67.5%;}
+   26.785%{left:2.5%;top:35%;}
+   37.499%{left:2.5%;top:35%;}
+   39.285%{left:2.5%;top: 2.5%;}
+   49.999%{left:2.5%;top: 2.5%;}
+   51.785%{left:35%;top: 2.5%;}
+   62.499%{left:35%;top: 2.5%;}
+   64.285%{left:67.5%;top: 2.5%;}
+   74.999%{left:67.5%;top: 2.5%;}
+   76.785%{left:67.5%;top:35%;}
+   87.499%{left:67.5%;top:35%;}
+   89.285%{left:35%;top:35%;}
+   100%{left:35%;top:35%;}
+}
+
+#boxes-loader-square-5{
+   left: 67.5%;
+   top: 70px;
+   animation:boxes-loader-square-5 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-5{
+         0%{left:67.5%;top:35%;}
+      1.785%{left:67.5%;top:35%;}
+      3.571%{left:35%;top:35%;}
+   14.285%{left:35%;top:35%;}
+   16.071%{left:35%;top:67.5%;}
+   26.785%{left:35%;top:67.5%;}
+   28.571%{left:2.5%;top:67.5%;}
+   39.285%{left:2.5%;top:67.5%;}
+   41.071%{left:2.5%;top:35%;}
+   51.785%{left:2.5%;top:35%;}
+   53.571%{left:2.5%;top: 2.5%;}
+   64.285%{left:2.5%;top: 2.5%;}
+   66.071%{left:35%;top: 2.5%;}
+   76.785%{left:35%;top: 2.5%;}
+   78.571%{left:67.5%;top: 2.5%;}
+   89.285%{left:67.5%;top: 2.5%;}
+   91.071%{left:67.5%;top:35%;}
+   100%{left:67.5%;top:35%;}
+}
+
+#boxes-loader-square-6{
+   left: 5px;
+   top: 67.5%;
+   animation:boxes-loader-square-6 12s ease infinite,colorGradientFade 16s ease infinite;
+}@keyframes boxes-loader-square-6{
+         0%{left:2.5%;top:67.5%;}
+   10.714%{left:2.5%;top:67.5%;}
+   12.499%{left:2.5%;top:35%;}
+   23.214%{left:2.5%;top:35%;}
+   24.999%{left:2.5%;top: 2.5%;}
+   35.714%{left:2.5%;top: 2.5%;}
+   37.499%{left:35%;top: 2.5%;}
+   48.214%{left:35%;top: 2.5%;}
+   49.999%{left:67.5%;top: 2.5%;}
+   60.714%{left:67.5%;top: 2.5%;}
+   62.499%{left:67.5%;top:35%;}
+   73.214%{left:67.5%;top:35%;}
+   74.999%{left:35%;top:35%;}
+   85.714%{left:35%;top:35%;}
+   87.499%{left:35%;top:67.5%;}
+   98.214%{left:35%;top:67.5%;}
+   99.999%{left:2.5%;top:67.5%;}
+   100%{left:2.5%;top:67.5%;}
+}
+
+#next{position: fixed; top:0; bottom:0; left:0; right:0;}
+
+.filebrowser-container {
+   height: 100%;
+   padding: 10px;
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+   align-items: stretch;
+   justify-content: space-between;
+}
+
+.filebrowser-head-content {
+   min-height: 1em;
+   display: flex;
+   flex-direction: row;
+   flex-wrap: nowrap;
+   align-content: stretch;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.filebrowser-context-actions-area {
+   padding-right: 10px;
+}
+
+.filebrowser-context-actions-area i {
+   font-size: 20px;
+   color: #DDE3F3;
+   cursor: pointer;
+   margin-left: 10px;
+}
+
+.filebrowser-head-area,
+.filebrowser-body-area {
+   padding: 5px;
+   background-color: #292f40;
+   border-radius: 5px;
+   box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
+}
+
+.filebrowser-body-area .filebrowser-button {
+   text-align: center;
+   font-size: 32px;
+   padding: 20px;
+   border-radius: 10px;
+   box-shadow: 0 0 5px 4px rgba(0,0,0,0.25);
+   background-color: #DDE3F3;
+   color: #292f40;
+}
+
+.filebrowser-body-content p {
+   color: #DDE3F3;
+   font-size: 20px;
+   text-align: center;
+}
+
+.filebrowser-breadcrumbs {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   justify-content: flex-start;
+   align-items: center;
+}
+
+.filebrowser-breadcrumb {
+}
+
+.filebrowser-breadcrumb-element {
+   padding-right: 10px;
+   padding-left: 10px;
+   font-size: 20px;
+   font-weight: bold;
+   color: #DDE3F3;
+   text-decoration: none;
+}
+
+/* Don't give special styling to the last element. */
+.filebrowser-breadcrumbs > .filebrowser-breadcrumb:last-child span {
+   color: #44556f;
+   cursor: inherit;
+   font-weight: inherit;
+}
+
+.filebrowser-breadcrumb-separator {
+   color: #44556f;
+}
+
+.filebrowser-body-area {
+   flex-grow: 1;
+   margin-top: 10px;
+}
+
+.filebrowser-body-content img.filebrowser-image {
+   max-width: 100%;
+}
+
+.filebrowser-label-container {
+   font-size: 20px;
+   color: #DDE3F3;
+   text-decoration: none;
+}
+
+.filebrowser-icon-board {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   align-items: flex-start;
+   align-content: flex-start;
+   justify-content: flex-start;
+}
+
+.filebrowser-icon-listing .filebrowser-label-container {
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+   justify-content: flex-start;
+   align-items: center;
+}
+
+.filebrowser-icon-listing {
+   width: 200px;
+   padding: 10px;
+}
+
+.filebrowser-icon-listing span {
+   word-break: break-word;
+}
+
+.filebrowser-icon-listing i {
+   font-size: 75px;
+   margin-bottom: 10px;
+}
+
+.filebrowser-text-center {
+   text-align: center;
+}
+
+/* Modal */
+.filebrowser-modal .tingle-modal-box {
+   background-color: #d9e0ea;
+}
+
+.filebrowser-modal-content {
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+
+.filebrowser-modal-loader {
+   width: 100px;
+   height: 100px;
+}
+
+.filebrowser-modal-loader .boxes-loader {
+   position: static;
+   margin: 0;
+   height: 100%;
+   width: 100%;
+   margin-top: 25px;
+}
+
+/* Gallery */
+.filebrowser-body-content .galleria {
+   height: 100%;
+   width: 100%;
+}
+
+.filebrowser-body-content .galleria-fscr {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 4;
+    cursor: pointer;
+    opacity: 0.3;
+}
+
+.filebrowser-body-content .galleria-fscr:hover {
+    opacity: 1.0;
+}
+
+.galleria-fscr:before {
+   content: "\f065"; /* char code for fa-expand */
+   position: absolute;
+   font-family: FontAwesome;
+   font-size: 40px;
+   color: #fff;
+}
+
+/* tables */
+table.tablesorter {
+   font-family: "Lucida Console", Monaco, monospace;
+   background-color: #CDCDCD;
+   font-size: 20pt;
+   width: 100%;
+   text-align: left;
+}
+
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+   background-color: #292f40;
+   color: #44556f;
+   font-size: 22pt;
+   padding: 4px;
+}
+
+table.tablesorter thead tr .header {
+   background-image: url(bg.gif);
+   background-repeat: no-repeat;
+   background-position: center right;
+   cursor: pointer;
+}
+
+table.tablesorter tbody td {
+   color: #DDE3F3;
+   padding: 4px;
+   background-color: #292f40;
+   vertical-align: top;
+   cursor: pointer;
+}
+
+table.tablesorter tbody tr.odd td {
+   background-color: #212737;
+}
+
+table.tablesorter thead tr .headerSortUp {
+   background-image: url(asc.gif);
+}
+
+table.tablesorter thead tr .headerSortDown {
+   background-image: url(desc.gif);
+}
+
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+   background-color: #288cfb;
+}
+
