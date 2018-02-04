@@ -2,7 +2,6 @@ package server;
 
 import (
    "encoding/hex"
-   "flag"
    "fmt"
    "net/http"
 
@@ -11,17 +10,6 @@ import (
 
    "github.com/eriq-augustine/elfs-api/api"
 );
-
-const (
-   DEFAULT_BASE_CONFIG_PATH = "config/config.json"
-   DEFAULT_FILETYPES_CONFIG_PATH = "config/filetypes.json"
-)
-
-// Flags
-var (
-   configPath = flag.String("config", DEFAULT_BASE_CONFIG_PATH, "Path to the configuration file to use")
-   prod = flag.Bool("prod", false, "Use prodution configuration")
-)
 
 func serveFavicon(response http.ResponseWriter, request *http.Request) {
    dataBytes, err := hex.DecodeString(goconfig.GetStringDefault("favicon", ""));
@@ -92,21 +80,5 @@ func StartServer() {
       if err != nil {
          golog.PanicE("Failed to server http", err);
       }
-   }
-}
-
-func LoadConfig() {
-   flag.Parse();
-
-   goconfig.LoadFile(*configPath);
-
-   if (*prod) {
-      golog.SetDebug(false);
-
-      if (goconfig.Has("prodConfig")) {
-         goconfig.LoadFile(goconfig.GetString("prodConfig"));
-      }
-   } else {
-      golog.SetDebug(true);
    }
 }
