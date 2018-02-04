@@ -14,6 +14,7 @@ import (
    "github.com/eriq-augustine/golog"
 
    "github.com/eriq-augustine/elfs-api/auth"
+   "github.com/eriq-augustine/elfs-api/config"
    "github.com/eriq-augustine/elfs-api/messages"
 )
 
@@ -24,7 +25,6 @@ const (
    PARAM_IV = "iv"
    PARAM_KEY = "key"
    PARAM_PASSHASH = "passhash"
-   PARAM_PARTITION = "partition"
    PARAM_TOKEN = "token"
    PARAM_USERNAME = "username"
 )
@@ -41,15 +41,6 @@ func CreateRouter(rootRedirect string) *mux.Router {
    factory.SetTokenValidator(validateToken);
 
    methods := []*goapi.ApiMethod{
-      factory.NewApiMethod(
-         "auth/partitions/load",
-         loadPartitions,
-         true,
-         []goapi.ApiMethodParam{
-            {PARAM_KEY, goapi.API_PARAM_TYPE_STRING, true},
-            {PARAM_IV, goapi.API_PARAM_TYPE_STRING, true},
-         },
-      ),
       factory.NewApiMethod(
          "auth/token/request",
          requestToken,
@@ -70,7 +61,6 @@ func CreateRouter(rootRedirect string) *mux.Router {
          browse,
          true,
          []goapi.ApiMethodParam{
-            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
             {PARAM_ID, goapi.API_PARAM_TYPE_STRING, false},
          },
       ),
@@ -79,7 +69,6 @@ func CreateRouter(rootRedirect string) *mux.Router {
          getFileContents,
          true,
          []goapi.ApiMethodParam{
-            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
             {PARAM_ID, goapi.API_PARAM_TYPE_STRING, true},
          },
       ).SetAllowTokenParam(true),
@@ -87,23 +76,13 @@ func CreateRouter(rootRedirect string) *mux.Router {
          "group/get/all",
          getGroups,
          true,
-         []goapi.ApiMethodParam{
-            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
-         },
-      ),
-      factory.NewApiMethod(
-         "partition/get/all",
-         getPartitions,
-         true,
          []goapi.ApiMethodParam{},
       ),
       factory.NewApiMethod(
          "user/get/all",
          getUsers,
          true,
-         []goapi.ApiMethodParam{
-            {PARAM_PARTITION, goapi.API_PARAM_TYPE_STRING, true},
-         },
+         []goapi.ApiMethodParam{},
       ),
    };
 
@@ -133,7 +112,7 @@ func CreateRouter(rootRedirect string) *mux.Router {
 func buildApiUrl(path string) string {
    path = strings.TrimPrefix(path, "/");
 
-   return fmt.Sprintf("/api/v%02d/%s", goconfig.GetIntDefault("apiVersion", 0), path);
+   return fmt.Sprintf("/api/v%02d/%s", goconfig.GetIntDefault(config.KEY_API_VERSION, 0), path);
 }
 
 func notFound() (interface{}, int) {

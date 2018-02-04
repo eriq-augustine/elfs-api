@@ -6,7 +6,6 @@ mediaserver.apiPath = '/api/v00';
 mediaserver.apiBrowserPath = mediaserver.apiPath + '/browse';
 mediaserver.apiContentsPath = mediaserver.apiPath + '/contents';
 mediaserver.apiLoginPath = mediaserver.apiPath + '/auth/token/request';
-mediaserver.apiPartitionsPath = mediaserver.apiPath + '/partition/get/all';
 
 mediaserver.apiToken = undefined;
 
@@ -89,6 +88,7 @@ mediaserver.login = function() {
          mediaserver.apiToken = data.Token;
          mediaserver.store.set(mediaserver.store.TOKEN_KEY, mediaserver.apiToken);
          mediaserver._init();
+         location.reload();
       }
    });
 }

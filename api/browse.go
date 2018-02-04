@@ -18,32 +18,28 @@ import (
    "github.com/eriq-augustine/elfs-api/model"
 );
 
-// Add webvtt into the mime type.
 func init() {
+   // Add webvtt into the mime type.
    mime.AddExtensionType(".vtt", "text/vtt");
 }
 
-func browse(username goapi.UserName, partition string, rawDirentId string) (interface{}, int, error) {
-   golog.Debug("Serving: " + partition + "::[" + rawDirentId + "]");
+func browse(username goapi.UserName, rawDirentId string) (interface{}, int, error) {
+   golog.Debug("Serving: [" + rawDirentId + "]");
 
-   apiUser, ok := auth.GetUser(string(username));
+   user, ok := auth.GetUser(string(username));
    if (!ok) {
       // This should never happen since we made it past the auth middleware.
       return "", 0, errors.New("User does not exist");
    }
 
-   // Get the driver.
-   driver, userId, err := fsdriver.GetDriver(apiUser, partition);
-   if (err != nil) {
-      return "", 0, err;
-   }
+   var driver *driver.Driver = fsdriver.GetDriver();
 
    var direntId dirent.Id = dirent.Id(rawDirentId);
    if (rawDirentId == "") {
       direntId = dirent.ROOT_ID;
    }
 
-   direntInfo, err := driver.GetDirent(userId, direntId);
+   direntInfo, err := driver.GetDirent(user.Id, direntId);
    if (err != nil) {
       return "", http.StatusNotFound, err;
    }
@@ -51,7 +47,7 @@ func browse(username goapi.UserName, partition string, rawDirentId string) (inte
    if (direntInfo.IsFile) {
       return messages.NewFileInfo(model.DirEntryFromDriver(direntInfo)), 0, nil;
    } else {
-      return serveDir(userId, driver, direntInfo);
+      return serveDir(user.Id, driver, direntInfo);
    }
 }
 
@@ -69,22 +65,18 @@ func serveDir(userId user.Id, driver *driver.Driver, dirInfo *dirent.Dirent) (in
    return messages.NewListDir(model.DirEntryFromDriver(dirInfo), dirents), 0, nil;
 }
 
-func getFileContents(username goapi.UserName, partition string, rawFileId string) (interface{}, int, string, error) {
-   golog.Debug("Serving Contents: " + partition + "::[" + rawFileId + "]");
+func getFileContents(username goapi.UserName, rawFileId string) (interface{}, int, string, error) {
+   golog.Debug("Serving Contents: [" + rawFileId + "]");
 
-   apiUser, ok := auth.GetUser(string(username));
+   user, ok := auth.GetUser(string(username));
    if (!ok) {
       // This should never happen since we made it past the auth middleware.
       return "", 0, "", errors.New("User does not exist");
    }
 
-   // Get the driver.
-   driver, userId, err := fsdriver.GetDriver(apiUser, partition);
-   if (err != nil) {
-      return "", 0, "", err;
-   }
+   var driver *driver.Driver = fsdriver.GetDriver();
 
-   fileInfo, err := driver.GetDirent(userId, dirent.Id(rawFileId));
+   fileInfo, err := driver.GetDirent(user.Id, dirent.Id(rawFileId));
    if (err != nil) {
       return "", http.StatusNotFound, "", err;
    }
@@ -93,7 +85,7 @@ func getFileContents(username goapi.UserName, partition string, rawFileId string
       return "", http.StatusBadRequest, "", errors.New("Cannot get the file contents of a dir.");
    }
 
-   reader, err := driver.Read(userId, fileInfo.Id);
+   reader, err := driver.Read(user.Id, fileInfo.Id);
    if (err != nil) {
       return "", 0, "", err;
    }

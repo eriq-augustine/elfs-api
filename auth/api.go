@@ -1,27 +1,22 @@
 package auth;
 
 // Authentication for the API.
-// Note that there is a second level for authentication to each partition.
 // Auth the user and give them a token that does not expire.
 // However the token is stored in memory, so a server restart invalidates it.
 
 import (
+   "fmt"
+
    "bytes"
    "crypto/rand"
    "encoding/base64"
    "encoding/binary"
-   "encoding/json"
-   "io/ioutil"
-   "sync"
    "time"
 
-   "github.com/eriq-augustine/goconfig"
-   "github.com/eriq-augustine/golog"
-   "golang.org/x/crypto/bcrypt"
+   "github.com/eriq-augustine/elfs/user"
 
    "github.com/eriq-augustine/elfs-api/apierrors"
-   "github.com/eriq-augustine/elfs-api/model"
-   "github.com/eriq-augustine/elfs-api/util"
+   "github.com/eriq-augustine/elfs-api/fsdriver"
 )
 
 const (
@@ -29,45 +24,38 @@ const (
 )
 
 // {username: *User}
-var apiUsers map[string]*model.MemoryUser
+var apiUsers map[string]*user.User
 // {token: username}
 var apiSessions map[string]string;
 
-var createAccountMutex *sync.Mutex;
-
 func init() {
-   createAccountMutex = &sync.Mutex{};
-   apiUsers = make(map[string]*model.MemoryUser);
+   apiUsers = make(map[string]*user.User);
    apiSessions = make(map[string]string);
 }
 
-func GetUser(username string) (*model.MemoryUser, bool) {
+func GetUser(username string) (*user.User, bool) {
    user, ok := apiUsers[username];
    return user, ok;
 }
 
 // Returns the token.
 func AuthenticateUser(username string, weakhash string) (string, error) {
-   user, exists := apiUsers[username];
-   if (!exists) {
-      return "", apierrors.TokenValidationError{apierrors.TOKEN_AUTH_BAD_CREDENTIALS};
-   }
-
-   err := bcrypt.CompareHashAndPassword([]byte(user.Passhash), []byte(weakhash));
+   authUser, err := fsdriver.GetDriver().UserAuth(username, weakhash);
    if (err != nil) {
+      // TEST
+      fmt.Println(weakhash);
       return "", apierrors.TokenValidationError{apierrors.TOKEN_AUTH_BAD_CREDENTIALS};
    }
 
    token, _:= generateToken();
-   apiSessions[token] = username;
 
-   // Ensure that any partition credentials are decrypted.
-   user.DecryptPartitionCredentials(weakhash)
+   apiUsers[username] = authUser;
+   apiSessions[token] = username;
 
    return token, nil;
 }
 
-// Validate the token and get back the token's secret.
+// Validate the token and get back the username associated with it.
 func ValidateToken(token string) (string, error) {
    username, exists := apiSessions[token];
    if (!exists) {
@@ -86,58 +74,6 @@ func InvalidateToken(token string) (bool, error) {
 
    delete(apiSessions, token);
    return true, nil;
-}
-
-func SaveUsers() {
-   SaveUsersFile(goconfig.GetString("usersFile"), apiUsers);
-}
-
-func SaveUsersFile(usersFile string, usersMap map[string]*model.MemoryUser) {
-   fileUsers := make([]model.DiskUser, 0);
-   for _, user := range(usersMap) {
-      fileUsers = append(fileUsers, user.DiskUser);
-   }
-
-   jsonString, err := util.ToJSONPretty(fileUsers);
-   if (err != nil) {
-      golog.ErrorE("Unable to marshal apiUsers", err);
-      return;
-   }
-
-   err = ioutil.WriteFile(usersFile, []byte(jsonString), 0600);
-   if (err != nil) {
-      golog.ErrorE("Unable to save apiUsers", err);
-   }
-}
-
-func LoadUsers() {
-   apiUsers = LoadUsersFromFile(goconfig.GetString("usersFile"));
-}
-
-func LoadUsersFromFile(usersFile string) map[string]*model.MemoryUser {
-   usersMap := make(map[string]*model.MemoryUser);
-
-   data, err := ioutil.ReadFile(usersFile);
-   if (err != nil) {
-      golog.ErrorE("Unable to read apiUsers file", err);
-      return usersMap;
-   }
-
-   var fileUsers []model.DiskUser;
-   err = json.Unmarshal(data, &fileUsers);
-   if (err != nil) {
-      golog.ErrorE("Unable to unmarshal apiUsers", err);
-      return usersMap;
-   }
-
-   for _, user := range(fileUsers) {
-      usersMap[user.Username] = &model.MemoryUser{
-         DiskUser: user,
-         PartitionCredentials: nil,
-      };
-   }
-
-   return usersMap;
 }
 
 // Generate a "unique" token.
