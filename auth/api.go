@@ -5,8 +5,6 @@ package auth;
 // However the token is stored in memory, so a server restart invalidates it.
 
 import (
-   "fmt"
-
    "bytes"
    "crypto/rand"
    "encoding/base64"
@@ -42,8 +40,6 @@ func GetUser(username string) (*user.User, bool) {
 func AuthenticateUser(username string, weakhash string) (string, error) {
    authUser, err := fsdriver.GetDriver().UserAuth(username, weakhash);
    if (err != nil) {
-      // TEST
-      fmt.Println(weakhash);
       return "", apierrors.TokenValidationError{apierrors.TOKEN_AUTH_BAD_CREDENTIALS};
    }
 
