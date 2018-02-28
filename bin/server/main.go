@@ -23,12 +23,13 @@ var (
    connectionString = pflag.StringP("connection-string", "s", "", "Connection string for the target filesystem.");
    hexKey = pflag.StringP("key", "k", "", "Key for the filesystem.");
    hexIV = pflag.StringP("iv", "i", "", "IV for the filesystem.");
+   force = pflag.BoolP("force", "f", false, "Force the filesystem to mount regardless of locks.");
 )
 
 func main() {
    key, iv := loadConfig();
 
-   err := fsdriver.LoadDriver(*connectionString, key, iv);
+   err := fsdriver.LoadDriver(*connectionString, key, iv, *force);
    if (err != nil) {
       golog.PanicE(fmt.Sprintf("Could not load driver for: [%s].", *connectionString), err);
    }

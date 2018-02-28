@@ -28,12 +28,12 @@ func init() {
 }
 
 // Connect to the filesystem and load a driver for it.
-func LoadDriver(connectionString string, key []byte, iv []byte) error {
+func LoadDriver(connectionString string, key []byte, iv []byte, force bool) error {
    if (activeDriver != nil) {
       return nil;
    }
 
-   driver, err := getDriverInternal(connectionString, key, iv);
+   driver, err := getDriverInternal(connectionString, key, iv, force);
    if (err != nil) {
       return errors.WithStack(err);
    }
@@ -48,7 +48,7 @@ func GetDriver() *driver.Driver {
    return activeDriver;
 }
 
-func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.Driver, error) {
+func getDriverInternal(connectionString string, key []byte, iv []byte, force bool) (*driver.Driver, error) {
    driverMutex.Lock();
    defer driverMutex.Unlock();
 
@@ -65,7 +65,7 @@ func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.
          return nil, errors.New("Local connection string path must be absolute.");
       }
 
-      rtn, err = driver.NewLocalDriver(key, iv, parts[1]);
+      rtn, err = driver.NewLocalDriver(key, iv, parts[1], force);
       if (err != nil) {
          return nil, errors.WithStack(err);
       }
@@ -75,7 +75,7 @@ func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.
       var awsProfile string = goconfig.GetStringDefault(config.KEY_AWS_PROFILE, config.DEFAULT_AWS_PROFILE);
       var awsRegion string = goconfig.GetStringDefault(config.KEY_AWS_REGION, config.DEFAULT_AWS_REGION);
 
-      rtn, err = driver.NewS3Driver(key, iv, parts[1], awsCredentialsPath, awsProfile, awsRegion, awsEndpoint);
+      rtn, err = driver.NewS3Driver(key, iv, parts[1], awsCredentialsPath, awsProfile, awsRegion, awsEndpoint, force);
       if (err != nil) {
          return nil, errors.WithStack(err);
       }
