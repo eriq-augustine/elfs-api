@@ -2,12 +2,14 @@ package config;
 
 const (
    DEFAULT_AWS_CRED_PATH = "~/.aws/credentials"
-   DEFAULT_AWS_PROFILE = "default"
-   DEFAULT_AWS_REGION = "us-west-1"
+   DEFAULT_AWS_ENDPOINT = ""
+   DEFAULT_AWS_PROFILE = "elfsapi"
+   DEFAULT_AWS_REGION = "us-east-1"
    DEFAULT_BASE_CONFIG_PATH = "config/config.json"
 
    KEY_API_VERSION = "api-version"
    KEY_AWS_CRED_PATH = "aws-credentials-path"
+   KEY_AWS_ENDPOINT = "aws-endpoint"
    KEY_AWS_PROFILE = "aws-profile"
    KEY_AWS_REGION = "aws-region"
    KEY_CLIENT_BASE_DIR = "client-base-dir"

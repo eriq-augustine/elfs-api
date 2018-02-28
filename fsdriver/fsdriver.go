@@ -71,10 +71,11 @@ func getDriverInternal(connectionString string, key []byte, iv []byte) (*driver.
       }
    } else if (parts[0] == connector.CONNECTOR_TYPE_S3) {
       var awsCredentialsPath string = goconfig.GetStringDefault(config.KEY_AWS_CRED_PATH, config.DEFAULT_AWS_CRED_PATH);
+      var awsEndpoint string = goconfig.GetStringDefault(config.KEY_AWS_ENDPOINT, config.DEFAULT_AWS_ENDPOINT);
       var awsProfile string = goconfig.GetStringDefault(config.KEY_AWS_PROFILE, config.DEFAULT_AWS_PROFILE);
       var awsRegion string = goconfig.GetStringDefault(config.KEY_AWS_REGION, config.DEFAULT_AWS_REGION);
 
-      rtn, err = driver.NewS3Driver(key, iv, parts[1], awsCredentialsPath, awsProfile, awsRegion);
+      rtn, err = driver.NewS3Driver(key, iv, parts[1], awsCredentialsPath, awsProfile, awsRegion, awsEndpoint);
       if (err != nil) {
          return nil, errors.WithStack(err);
       }

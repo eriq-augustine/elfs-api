@@ -30,13 +30,12 @@ func main() {
 
    err := fsdriver.LoadDriver(*connectionString, key, iv);
    if (err != nil) {
-      golog.Panic(fmt.Sprintf("Could not load driver for: [%s].", connectionString));
+      golog.PanicE(fmt.Sprintf("Could not load driver for: [%s].", *connectionString), err);
    }
 
    // Gracefully handle SIGINT and SIGTERM.
    sigChan := make(chan os.Signal, 1);
    signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM);
-
    go func() {
       <-sigChan;
       cleanup();
